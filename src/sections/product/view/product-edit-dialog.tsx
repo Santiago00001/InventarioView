@@ -36,7 +36,7 @@ const categoryToLetterMap: Record<string, Category> = {
 };
 
 async function updateProduct(ProductId: string, productData: ProductProps) {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/api/products/${ProductId}`, {
+  const response = await fetch(`${import.meta.env.VITE_APP_API_URL}api/products/${ProductId}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
