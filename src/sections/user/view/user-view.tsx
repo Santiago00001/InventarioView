@@ -54,7 +54,7 @@ export function UserView() {
     if (user._id) {
       // Actualizar usuario existente
       try {
-        const response = await axios.put(`http://localhost:3000/api/users/${user._id}`, user);
+        const response = await axios.put(`${process.env.REACT_APP_API_URL}/api/users/${user._id}`, user);
         const updatedUser: UserProps = response.data;
 
         setUsers((prev) =>
@@ -70,7 +70,7 @@ export function UserView() {
     } else {
       // Crear nuevo usuario
       try {
-        const response = await axios.post('http://localhost:3000/api/users', user);
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/users`, user);
         const newUser: UserProps = response.data;
 
         setUsers((prev) => [...prev, newUser]);
@@ -122,8 +122,8 @@ export function UserView() {
     const fetchUsersAndAgencies = async () => {
       try {
         const [usersResponse, agenciesResponse] = await Promise.all([
-          axios.get('http://localhost:3000/api/users'),
-          axios.get('http://localhost:3000/api/agencys'), // Obtener agencias desde aquí
+          axios.get(`${process.env.REACT_APP_API_URL}/api/users`),
+          axios.get(`${process.env.REACT_APP_API_URL}/api/agencys`), // Obtener agencias desde aquí
         ]);
 
         setUsers(usersResponse.data);
@@ -163,7 +163,7 @@ export function UserView() {
   const handleDeleteUser = async () => {
     if (userToDelete) {
       try {
-        await axios.delete(`http://localhost:3000/api/users/${userToDelete._id}`);
+        await axios.delete(`${process.env.REACT_APP_API_URL}/api/users/${userToDelete._id}`);
         setUsers((prev) => prev.filter(user => user._id !== userToDelete._id));
         handleCloseConfirmDialog(); // Cerrar el modal después de eliminar
       } catch (error) {

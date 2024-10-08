@@ -58,7 +58,7 @@ export function ProviderView() {
   const handleSaveProduct = async (provider: ProviderProps): Promise<void> => {
     if (provider._id) {
       try {
-        const response = await axios.put(`http://localhost:3000/api/providers/${provider._id}`, provider);
+        const response = await axios.put(`${process.env.REACT_APP_API_URL}/api/providers/${provider._id}`, provider);
         const updatedProduct: ProviderProps = response.data;
         setProviders((prev) =>
           prev.map((p) => (p._id === updatedProduct._id ? updatedProduct : p))
@@ -71,7 +71,7 @@ export function ProviderView() {
       }
     } else {
       try {
-        const response = await axios.post('http://localhost:3000/api/providers', provider);
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/providers`, provider);
         const newProvider: ProviderProps = response.data;
         setProviders((prev) => [...prev, newProvider]);
         setEditMode(false);
@@ -83,7 +83,7 @@ export function ProviderView() {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/providers');
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/providers`);
       if (response.status !== 200) {
         throw new Error('Network response was not ok');
       }
@@ -130,7 +130,7 @@ export function ProviderView() {
     const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar este producto?");
     if (confirmDelete) {
       try {
-        await axios.delete(`http://localhost:3000/api/providers/${_id}`);
+        await axios.delete(`${process.env.REACT_APP_API_URL}/api/providers/${_id}`);
         setProviders((prev) => prev.filter(provider => provider._id !== _id));
       } catch (error) {
         console.error('Error deleting product:', error);

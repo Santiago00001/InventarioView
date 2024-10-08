@@ -60,7 +60,7 @@ export function ProductsView() {
   const handleSaveProduct = async (product: ProductProps): Promise<void> => {
     if (product._id) {
       try {
-        const response = await axios.put(`http://localhost:3000/api/products/${product._id}`, product);
+        const response = await axios.put(`${process.env.REACT_APP_API_URL}/api/products/${product._id}`, product);
         const updatedProduct: ProductProps = response.data;
         setProducts((prev) =>
           prev.map((p) => (p._id === updatedProduct._id ? updatedProduct : p))
@@ -73,7 +73,7 @@ export function ProductsView() {
       }
     } else {
       try {
-        const response = await axios.post('http://localhost:3000/api/products', product);
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/products`, product);
         const newProduct: ProductProps = response.data;
         setProducts((prev) => [...prev, newProduct]);
         setEditMode(false);
@@ -86,7 +86,7 @@ export function ProductsView() {
   const fetchProducts = async () => {
     try {
       const [productsResponse] = await Promise.all([
-        axios.get('http://localhost:3000/api/products'),
+        axios.get(`${process.env.REACT_APP_API_URL}/api/products`),
       ]);
 
       if (productsResponse.status !== 200) {
@@ -135,7 +135,7 @@ export function ProductsView() {
     const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar este producto?");
     if (confirmDelete) {
       try {
-        await axios.delete(`http://localhost:3000/api/products/${_id}`);
+        await axios.delete(`${process.env.REACT_APP_API_URL}/api/products/${_id}`);
         setProducts((prev) => prev.filter(product => product._id !== _id));
       } catch (error) {
         console.error('Error deleting product:', error);
