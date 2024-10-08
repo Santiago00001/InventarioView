@@ -7,7 +7,7 @@ import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { Select, MenuItem, Checkbox, InputLabel, FormControl, FormControlLabel } from '@mui/material';
+import { Select, MenuItem, InputLabel, FormControl, InputAdornment } from '@mui/material';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
@@ -26,12 +26,24 @@ export function EditUserView({ user, onClose, onSave, agencies }: EditUserViewPr
   const [formData, setFormData] = useState<UserProps>(user);
 
   useEffect(() => {
-    setFormData(user);
+    if (user) {
+      // Separar el nombre del correo del dominio al cargar el usuario
+      setFormData({
+        ...user,
+        correo: user.correo.split('@')[0], // Obtener solo la parte antes de @
+      });
+    }
   }, [user]);
 
   const handleSave = async () => {
     try {
-      await onSave(formData); // Guardamos los cambios
+      // Concatenar el dominio al correo antes de guardar
+      const updatedUserData = {
+        ...formData,
+        correo: `${formData.correo}@coopserp.com`, // Concatenar el dominio aquí
+      };
+      
+      await onSave(updatedUserData); // Guardamos los cambios
       onClose(); // Cierra el modal
     } catch (error) {
       console.error('Error updating user:', error);
@@ -50,10 +62,7 @@ export function EditUserView({ user, onClose, onSave, agencies }: EditUserViewPr
           cod: selectedAgency.cod,
           nombre: selectedAgency.nombre,
           coordinador: selectedAgency.coordinador,
-          tipo: selectedAgency.tipo,
           director: selectedAgency.director,
-          cargo: selectedAgency.cargo,
-          correo: selectedAgency.correo,
         },
       });
     }
@@ -98,11 +107,23 @@ export function EditUserView({ user, onClose, onSave, agencies }: EditUserViewPr
           margin="normal"
         />
         <TextField
-          label="Correo"
+          label="Cargo"
+          value={formData.cargo}
+          onChange={(e) => setFormData({ ...formData, cargo: e.target.value })}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Correo (sin @coopserp.com)"
           value={formData.correo}
           onChange={(e) => setFormData({ ...formData, correo: e.target.value })}
           fullWidth
           margin="normal"
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">@coopserp.com</InputAdornment>
+            ),
+          }}
         />
 
         {/* Campo para seleccionar la Agencia */}
@@ -135,15 +156,7 @@ export function EditUserView({ user, onClose, onSave, agencies }: EditUserViewPr
             <MenuItem value="Almacenista">Almacenista</MenuItem>
           </Select>
         </FormControl>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={formData.verificacion}
-              onChange={(e) => setFormData({ ...formData, verificacion: e.target.checked })}
-            />
-          }
-          label="Verificado"
-        />
+
         <TextField
           select
           label="Estado"

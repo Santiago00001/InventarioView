@@ -1,75 +1,45 @@
 import type { SelectChangeEvent } from '@mui/material';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-import { Box, Card, Button, Select, MenuItem, TextField, Typography, InputLabel, FormControl, InputAdornment  } from '@mui/material';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import { Select, MenuItem, Checkbox, InputLabel, FormControl, FormControlLabel } from '@mui/material';
+
+import { DashboardContent } from 'src/layouts/dashboard';
 
 import { Iconify } from 'src/components/iconify';
 
 import type { UserProps, AgenciaProps } from '../user-table-row';
 
-interface CreateUserViewProps {
+interface EditUserViewProps {
+  user: UserProps;
   onClose: () => void;
   onSave: (user: UserProps) => Promise<void>;
-  agencies: AgenciaProps[];
+  agencies: AgenciaProps[]; // Lista de agencias disponibles
 }
 
-export function CreateUserView({ onClose, onSave, agencies }: CreateUserViewProps) {
-  const [formData, setFormData] = useState<UserProps>({
-    _id: '',
-    item: 0,
-    nombres: '',
-    apellidos: '',
-    cc: '',
-    cargo: '',
-    correo: '', // Solo la parte antes de @coopserp.com
-    agencia: {
-      _id: '', // Solo almacenamos el _id de la agencia
-      item: 0,
-      cod: 0,
-      nombre: '',
-      coordinador: '',
-      director: '',
-    },
-    rol: '',
-    verificacion: false,
-    status: '',
-    visible: 0,
-  });
+export function EditUserView({ user, onClose, onSave, agencies }: EditUserViewProps) {
+  const [formData, setFormData] = useState<UserProps>(user);
+
+  useEffect(() => {
+    setFormData(user);
+  }, [user]);
 
   const handleSave = async () => {
-    const formattedNombres = formData.nombres.toLowerCase().replace(/(?:^|\s)\S/g, (a) => a.toUpperCase());
-    const formattedApellidos = formData.apellidos.toUpperCase();
-    const formattedCargo = formData.cargo.toUpperCase();
-    
-    // Crear un nuevo objeto con los datos formateados
-    const newUserData = {
-      ...formData,
-      nombres: formattedNombres,
-      apellidos: formattedApellidos,
-      cargo: formattedCargo,
-      correo: `${formData.correo}@coopserp.com`, // Concatenar el dominio aquí
-    };
-
-    if (
-      !newUserData.nombres ||
-      !newUserData.apellidos ||
-      !newUserData.cc ||
-      !newUserData.cargo ||
-      !newUserData.agencia._id ||
-      !newUserData.rol ||
-      !newUserData.status
-    ) {
-      alert('Por favor completa todos los campos requeridos.');
-      return;
+    try {
+      await onSave(formData); // Guardamos los cambios
+      onClose(); // Cierra el modal
+    } catch (error) {
+      console.error('Error updating user:', error);
     }
-    
-    await onSave(newUserData);
-    onClose();
   };
 
   const handleAgencyChange = (event: SelectChangeEvent<string>) => {
-    const selectedAgencyId = event.target.value; // Ahora el valor es del tipo string
+    const selectedAgencyId = event.target.value;
     const selectedAgency = agencies.find(agency => agency._id === selectedAgencyId);
     if (selectedAgency) {
       setFormData({
@@ -86,17 +56,29 @@ export function CreateUserView({ onClose, onSave, agencies }: CreateUserViewProp
     }
   };
 
+  if (!user) return <Typography>Cargando...</Typography>;
+
   return (
-    <Box>
-      <Typography variant="h4">Crear Nuevo Usuario</Typography>
+    <DashboardContent>
+      <Box display="flex" alignItems="center" mb={5}>
+        <Typography variant="h4" flexGrow={1}>
+          Editar Usuario
+        </Typography>
+      </Box>
       <Card sx={{ p: 3 }}>
+        <TextField
+          label="ID"
+          value={formData.item}
+          disabled
+          fullWidth
+          margin="normal"
+        />
         <TextField
           label="Nombres"
           value={formData.nombres}
           onChange={(e) => setFormData({ ...formData, nombres: e.target.value })}
           fullWidth
           margin="normal"
-          required
         />
         <TextField
           label="Apellidos"
@@ -104,7 +86,6 @@ export function CreateUserView({ onClose, onSave, agencies }: CreateUserViewProp
           onChange={(e) => setFormData({ ...formData, apellidos: e.target.value })}
           fullWidth
           margin="normal"
-          required
         />
         <TextField
           label="CC"
@@ -112,15 +93,13 @@ export function CreateUserView({ onClose, onSave, agencies }: CreateUserViewProp
           onChange={(e) => setFormData({ ...formData, cc: e.target.value })}
           fullWidth
           margin="normal"
-          required
         />
         <TextField
           label="Cargo"
           value={formData.cargo}
-          onChange={(e) => setFormData({ ...formData, cargo: e.target.value })}
+          onChange={(e) => setFormData({ ...formData, cc: e.target.value })}
           fullWidth
           margin="normal"
-          required
         />
         <TextField
           label="Correo"
@@ -128,14 +107,9 @@ export function CreateUserView({ onClose, onSave, agencies }: CreateUserViewProp
           onChange={(e) => setFormData({ ...formData, correo: e.target.value })}
           fullWidth
           margin="normal"
-          required
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">@coopserp.com</InputAdornment>
-            ),
-          }}
         />
-        {/* Selección de Agencia */}
+
+        {/* Campo para seleccionar la Agencia */}
         <FormControl fullWidth margin="normal" required>
           <InputLabel>Agencia</InputLabel>
           <Select
@@ -165,24 +139,34 @@ export function CreateUserView({ onClose, onSave, agencies }: CreateUserViewProp
             <MenuItem value="Almacenista">Almacenista</MenuItem>
           </Select>
         </FormControl>
-        <FormControl fullWidth margin="normal" variant="outlined" required>
-          <InputLabel>Estado</InputLabel>
-          <Select
-            label="Estado"
-            value={formData.status}
-            onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-          >
-            <MenuItem value="activo">Activo</MenuItem>
-            <MenuItem value="inactivo">Inactivo</MenuItem>
-            <MenuItem value="suspendido">Suspendido</MenuItem>
-          </Select>
-        </FormControl>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={formData.verificacion}
+              onChange={(e) => setFormData({ ...formData, verificacion: e.target.checked })}
+            />
+          }
+          label="Verificado"
+        />
+        <TextField
+          select
+          label="Estado"
+          value={formData.status}
+          onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+          fullWidth
+          margin="normal"
+          variant="outlined"
+        >
+          <MenuItem value="activo">Activo</MenuItem>
+          <MenuItem value="inactivo">Inactivo</MenuItem>
+          <MenuItem value="suspendido">Suspendido</MenuItem>
+        </TextField>
 
-        <Button variant="contained" sx={{ mr: 2 }} onClick={handleSave} startIcon={<Iconify icon="mingcute:add-line" />}>
-          Crear Usuario
+        <Button variant="contained" sx={{ mr: 2 }} onClick={handleSave} startIcon={<Iconify icon="mingcute:save-line" />}>
+          Guardar
         </Button>
         <Button variant="outlined" sx={{ mr: 2 }} onClick={onClose}>Cancelar</Button>
       </Card>
-    </Box>
+    </DashboardContent>
   );
 }

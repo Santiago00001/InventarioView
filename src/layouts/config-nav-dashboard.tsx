@@ -28,6 +28,11 @@ export const navData = [
     icon: icon('ic-equipo'),
   },
   {
+    title: 'Agencias',
+    path: '/agencys',
+    icon: icon('ic-equipo'),
+  },
+  {
     title: 'Blog',
     path: '/blog',
     icon: icon('ic-blog'),

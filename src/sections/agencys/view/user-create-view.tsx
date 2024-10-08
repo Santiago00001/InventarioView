@@ -2,7 +2,7 @@ import type { SelectChangeEvent } from '@mui/material';
 
 import { useState } from 'react';
 
-import { Box, Card, Button, Select, MenuItem, TextField, Typography, InputLabel, FormControl, InputAdornment  } from '@mui/material';
+import { Box, Card, Button, Select, Checkbox, MenuItem, TextField, Typography, InputLabel, FormControl, FormControlLabel } from '@mui/material';
 
 import { Iconify } from 'src/components/iconify';
 
@@ -22,7 +22,7 @@ export function CreateUserView({ onClose, onSave, agencies }: CreateUserViewProp
     apellidos: '',
     cc: '',
     cargo: '',
-    correo: '', // Solo la parte antes de @coopserp.com
+    correo: '',
     agencia: {
       _id: '', // Solo almacenamos el _id de la agencia
       item: 0,
@@ -38,33 +38,19 @@ export function CreateUserView({ onClose, onSave, agencies }: CreateUserViewProp
   });
 
   const handleSave = async () => {
-    const formattedNombres = formData.nombres.toLowerCase().replace(/(?:^|\s)\S/g, (a) => a.toUpperCase());
-    const formattedApellidos = formData.apellidos.toUpperCase();
-    const formattedCargo = formData.cargo.toUpperCase();
-    
-    // Crear un nuevo objeto con los datos formateados
-    const newUserData = {
-      ...formData,
-      nombres: formattedNombres,
-      apellidos: formattedApellidos,
-      cargo: formattedCargo,
-      correo: `${formData.correo}@coopserp.com`, // Concatenar el dominio aquí
-    };
-
     if (
-      !newUserData.nombres ||
-      !newUserData.apellidos ||
-      !newUserData.cc ||
-      !newUserData.cargo ||
-      !newUserData.agencia._id ||
-      !newUserData.rol ||
-      !newUserData.status
+      !formData.nombres ||
+      !formData.apellidos ||
+      !formData.cc ||
+      !formData.agencia._id || // Verificamos que _id de la agencia no esté vacío
+      !formData.rol ||
+      !formData.status
     ) {
       alert('Por favor completa todos los campos requeridos.');
       return;
     }
-    
-    await onSave(newUserData);
+
+    await onSave(formData);
     onClose();
   };
 
@@ -117,7 +103,7 @@ export function CreateUserView({ onClose, onSave, agencies }: CreateUserViewProp
         <TextField
           label="Cargo"
           value={formData.cargo}
-          onChange={(e) => setFormData({ ...formData, cargo: e.target.value })}
+          onChange={(e) => setFormData({ ...formData, cc: e.target.value })}
           fullWidth
           margin="normal"
           required
@@ -129,11 +115,6 @@ export function CreateUserView({ onClose, onSave, agencies }: CreateUserViewProp
           fullWidth
           margin="normal"
           required
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">@coopserp.com</InputAdornment>
-            ),
-          }}
         />
         {/* Selección de Agencia */}
         <FormControl fullWidth margin="normal" required>
@@ -165,6 +146,15 @@ export function CreateUserView({ onClose, onSave, agencies }: CreateUserViewProp
             <MenuItem value="Almacenista">Almacenista</MenuItem>
           </Select>
         </FormControl>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={formData.verificacion}
+              onChange={(e) => setFormData({ ...formData, verificacion: e.target.checked })}
+            />
+          }
+          label="Verificado"
+        />
         <FormControl fullWidth margin="normal" variant="outlined" required>
           <InputLabel>Estado</InputLabel>
           <Select

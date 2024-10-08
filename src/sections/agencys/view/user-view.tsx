@@ -229,7 +229,6 @@ export function UserView() {
                   { id: 'nombres' as keyof UserProps, label: 'Nombres' },
                   { id: 'apellidos' as keyof UserProps, label: 'Apellidos' },
                   { id: 'cc' as keyof UserProps, label: 'CC' },
-                  { id: 'cargo' as keyof UserProps, label: 'Cargo' },
                   { id: 'correo' as keyof UserProps, label: 'Correo' },
                   { id: 'agencia' as keyof UserProps, label: 'Agencia' },
                   { id: 'rol' as keyof UserProps, label: 'Rol' },
