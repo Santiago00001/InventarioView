@@ -237,7 +237,6 @@ export function UserView() {
                   { id: '' as keyof UserProps, label: '' }, // Asegúrate de que este id sea opcional o válido
                 ]}
               />
-
               <TableBody>
                 {loading ? (
                   <TableRow>

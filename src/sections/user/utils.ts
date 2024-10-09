@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 import type { UserProps } from './user-table-row';
 
 // ----------------------------------------------------------------------
@@ -58,6 +60,17 @@ type ApplyFilterProps = {
   selectedAgency: string;
   selectedStatus: string;
   comparator: (a: any, b: any) => number;
+};
+
+// Función para obtener el usuario por su ID
+export const fetchUserById = async (id: string): Promise<UserProps> => {
+  try {
+    const response = await axios.get(`${import.meta.env.VITE_APP_API_URL}api/users/${id}`); // Ajusta la URL según tu API
+    return response.data; // Asegúrate de que la respuesta tenga la estructura esperada
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    throw new Error('Error fetching user');
+  }
 };
 
 export function applyFilter({ inputData, comparator, filterName, selectedAgency, selectedStatus }: ApplyFilterProps) {

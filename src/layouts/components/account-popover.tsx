@@ -50,6 +50,12 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
     [handleClosePopover, router]
   );
 
+  const handleLogout = useCallback(() => {
+    localStorage.removeItem('token'); // Elimina el token del local storage
+    router.push('/sign-in'); // Redirige a la página de inicio de sesión
+  }, [router]);
+
+
   return (
     <>
       <IconButton
@@ -129,8 +135,8 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <Box sx={{ p: 1 }}>
-          <Button fullWidth color="error" size="medium" variant="text">
-            Logout
+          <Button fullWidth color="error" size="medium" variant="text" onClick={handleLogout}>
+            Cerrar Sesión
           </Button>
         </Box>
       </Popover>

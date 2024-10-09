@@ -8,6 +8,8 @@ import { varAlpha } from 'src/theme/styles';
 import { AuthLayout } from 'src/layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
 
+import ProtectedRoute from './components/ProtectedRoute';
+
 // ----------------------------------------------------------------------
 
 export const HomePage = lazy(() => import('src/pages/home'));
@@ -36,14 +38,21 @@ const renderFallback = (
 );
 
 export function Router() {
+  const token = localStorage.getItem('token'); // Verificar si el token está presente
+
   return useRoutes([
     {
-      element: (
-        <DashboardLayout>
-          <Suspense fallback={renderFallback}>
-            <Outlet />
-          </Suspense>
-        </DashboardLayout>
+      path: '/',
+      element: token ? ( // Si hay token, renderiza el DashboardLayout
+        <Suspense fallback={renderFallback}>
+          <DashboardLayout>
+            <ProtectedRoute>
+              <Outlet />
+            </ProtectedRoute>
+          </DashboardLayout>
+        </Suspense>
+      ) : ( // Si no hay token, redirige al sign-in
+        <Navigate to="/sign-in" replace />
       ),
       children: [
         { element: <HomePage />, index: true },
@@ -59,7 +68,9 @@ export function Router() {
       path: 'sign-in',
       element: (
         <AuthLayout>
-          <SignInPage />
+          <Suspense fallback={renderFallback}>
+            <SignInPage />
+          </Suspense>
         </AuthLayout>
       ),
     },
