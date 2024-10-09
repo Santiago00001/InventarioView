@@ -7,7 +7,7 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 
 import { visuallyHidden } from './utils';
 
-import type { UserProps } from './user-table-row';
+import type { UserProps } from './agency-table-row';
 
 // ----------------------------------------------------------------------
 

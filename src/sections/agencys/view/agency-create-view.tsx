@@ -6,7 +6,7 @@ import { Box, Card, Button, Select, Checkbox, MenuItem, TextField, Typography, I
 
 import { Iconify } from 'src/components/iconify';
 
-import type { UserProps, AgenciaProps } from '../user-table-row';
+import type { UserProps, AgenciaProps } from '../agency-table-row';
 
 interface CreateUserViewProps {
   onClose: () => void;

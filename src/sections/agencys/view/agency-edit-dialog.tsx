@@ -13,7 +13,7 @@ import { DashboardContent } from 'src/layouts/dashboard';
 
 import { Iconify } from 'src/components/iconify';
 
-import type { UserProps, AgenciaProps } from '../user-table-row';
+import type { UserProps, AgenciaProps } from '../agency-table-row';
 
 interface EditUserViewProps {
   user: UserProps;

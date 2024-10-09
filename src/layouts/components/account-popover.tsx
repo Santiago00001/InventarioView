@@ -1,6 +1,7 @@
 import type { IconButtonProps } from '@mui/material/IconButton';
+import type { UserProps } from 'src/sections/user/user-table-row';
 
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -14,10 +15,6 @@ import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 
 import { useRouter, usePathname } from 'src/routes/hooks';
 
-import { _myAccount } from 'src/_mock';
-
-// ----------------------------------------------------------------------
-
 export type AccountPopoverProps = IconButtonProps & {
   data?: {
     label: string;
@@ -29,10 +26,10 @@ export type AccountPopoverProps = IconButtonProps & {
 
 export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps) {
   const router = useRouter();
-
   const pathname = usePathname();
 
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
+  const [user, setUser] = useState<UserProps | null>(null); // Estado para almacenar la información del usuario
 
   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
     setOpenPopover(event.currentTarget);
@@ -52,9 +49,18 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
 
   const handleLogout = useCallback(() => {
     localStorage.removeItem('token'); // Elimina el token del local storage
+    localStorage.removeItem('currentUserId'); // Opcional: eliminar el ID del usuario
+    localStorage.removeItem('currentUser'); // Opcional: eliminar la información del usuario
     router.push('/sign-in'); // Redirige a la página de inicio de sesión
   }, [router]);
 
+  useEffect(() => {
+    // Recupera la información del usuario del localStorage
+    const userInfo = localStorage.getItem('currentUser');
+    if (userInfo) {
+      setUser(JSON.parse(userInfo)); // Almacena la información del usuario en el estado
+    }
+  }, []);
 
   return (
     <>
@@ -70,8 +76,8 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
         }}
         {...other}
       >
-        <Avatar src={_myAccount.photoURL} alt={_myAccount.displayName} sx={{ width: 1, height: 1 }}>
-          {_myAccount.displayName.charAt(0).toUpperCase()}
+        <Avatar alt={`${user?.nombres} ${user?.apellidos}`} sx={{ bgcolor: 'primary.main' }}>
+          {user ? `${user.nombres.charAt(0)}${user.apellidos.charAt(0)}` : '?'}  {/* Iniciales del usuario */}
         </Avatar>
       </IconButton>
 
@@ -89,11 +95,11 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
       >
         <Box sx={{ p: 2, pb: 1.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {_myAccount?.displayName}
+            {user ? `${user.nombres} ${user.apellidos}` : 'Usuario desconocido'}
           </Typography>
 
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {_myAccount?.email}
+            {user?.correo || 'Sin correo'}
           </Typography>
         </Box>
 

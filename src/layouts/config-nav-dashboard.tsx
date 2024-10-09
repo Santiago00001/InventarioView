@@ -31,21 +31,26 @@ export const navData = [
     title: 'Agencias',
     path: '/agencys',
     icon: icon('ic-equipo'),
-  },
+  }
+  /*
   {
     title: 'Blog',
     path: '/blog',
     icon: icon('ic-blog'),
   },
+  */
+  /* 
   {
     title: 'Sign in',
     path: '/sign-in',
     icon: icon('ic-lock'),
   },
-/*  {
-    title: 'Not found',
-    path: '/404',
-    icon: icon('ic-disabled'),
-  },
   */
+  /*  
+  {
+      title: 'Not found',
+      path: '/404',
+      icon: icon('ic-disabled'),
+    },
+    */
 ];

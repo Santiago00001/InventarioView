@@ -26,13 +26,13 @@ import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
 import { TableNoData } from '../table-no-data';
-import { UserTableRow } from '../user-table-row';
-import { EditUserView } from './user-edit-dialog';
-import { UserTableHead } from '../user-table-head';
+import { UserTableRow } from '../agency-table-row';
+import { EditUserView } from './agency-edit-dialog';
+import { UserTableHead } from '../agency-table-head';
 import { applyFilter, getComparator } from '../utils';
-import { UserTableToolbar } from '../user-table-toolbar';
+import { UserTableToolbar } from '../agency-table-toolbar';
 
-import type { UserProps, AgenciaProps } from '../user-table-row';
+import type { UserProps, AgenciaProps } from '../agency-table-row';
 
 export function UserView() {
   const [filterName, setFilterName] = useState<string>('');
@@ -226,13 +226,10 @@ export function UserView() {
                 onSelectAllRows={() => { }}
                 headLabel={[
                   { id: 'number' as keyof UserProps, label: '#', align: 'center' }, // Puede ser un string, pero no colidir con UserProps
-                  { id: 'nombres' as keyof UserProps, label: 'Nombres' },
-                  { id: 'apellidos' as keyof UserProps, label: 'Apellidos' },
-                  { id: 'cc' as keyof UserProps, label: 'CC' },
-                  { id: 'correo' as keyof UserProps, label: 'Correo' },
-                  { id: 'agencia' as keyof UserProps, label: 'Agencia' },
-                  { id: 'rol' as keyof UserProps, label: 'Rol' },
-                  { id: 'status' as keyof UserProps, label: 'Estado' },
+                  { id: 'nombre' as keyof UserProps, label: 'Nombre' },
+                  { id: 'cod' as keyof UserProps, label: 'Codigo' },
+                  { id: 'coordinador' as keyof UserProps, label: 'Coordinador' },
+                  { id: 'director' as keyof UserProps, label: 'Director' },
                   { id: '' as keyof UserProps, label: '' }, // Asegúrate de que este id sea opcional o válido
                 ]}
               />
