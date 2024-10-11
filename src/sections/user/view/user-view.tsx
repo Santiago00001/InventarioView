@@ -1,4 +1,6 @@
 // UserView.tsx
+import type { AgenciaProps } from 'src/sections/agencys/agency-table-row';
+
 import axios from 'axios';
 import { useMemo, useState, useEffect } from 'react';
 
@@ -32,7 +34,8 @@ import { UserTableHead } from '../user-table-head';
 import { applyFilter, getComparator } from '../utils';
 import { UserTableToolbar } from '../user-table-toolbar';
 
-import type { UserProps, AgenciaProps } from '../user-table-row';
+import type { UserProps } from '../user-table-row';
+
 
 export function UserView() {
   const [filterName, setFilterName] = useState<string>('');
@@ -81,7 +84,6 @@ export function UserView() {
       }
     }
   };
-
 
   const handleSelectRow = (id: string) => {
     const selectedIndex = selected.indexOf(id);
@@ -268,7 +270,7 @@ export function UserView() {
           count={users.length}
           rowsPerPage={table.rowsPerPage}
           onPageChange={table.onChangePage} // Asegúrate de que esta función está definida
-          rowsPerPageOptions={[5, 10, 25, 100]}
+          rowsPerPageOptions={[5, 10, 25, 100, 500]}
           onRowsPerPageChange={table.onChangeRowsPerPage} // Asegúrate de que esta función está definida
         />
       </Card>

@@ -1,4 +1,6 @@
-import type { UserProps, AgenciaProps } from 'src/sections/user/user-table-row';
+import type { UserProps } from 'src/sections/user/user-table-row';
+import type { AgenciaProps } from 'src/sections/agencys/agency-table-row';
+
 
 import { useState } from 'react';
 

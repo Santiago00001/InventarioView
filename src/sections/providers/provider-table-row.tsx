@@ -91,10 +91,22 @@ export function ProductTableRow({ row, selected, index, onSelectRow, onEditProdu
         <TableCell>{row.fecha_inag.toString()}</TableCell> {/* Convertir Date a string para mostrar */}
         <TableCell>{row.cod_ins}</TableCell>
         <TableCell>{row.cod_ins_fecha.toString()}</TableCell>
-        <TableCell>{row.ver_ins ? 'Sí' : 'No'}</TableCell>
+        <TableCell align="center">
+          {row.ver_ins ? (
+            <Iconify width={22} icon="solar:check-circle-bold" sx={{ color: 'success.main' }} />
+          ) : (
+            <Iconify width={22} icon="mdi:close-circle" sx={{ color: 'error.main' }} />
+          )}
+        </TableCell>
         <TableCell>{row.cod_dat}</TableCell>
         <TableCell>{row.cod_dat_fecha.toString()}</TableCell>
-        <TableCell>{row.ver_dat ? 'Sí' : 'No'}</TableCell>
+        <TableCell align="center">
+          {row.ver_dat ? (
+            <Iconify width={22} icon="solar:check-circle-bold" sx={{ color: 'success.main' }} />
+          ) : (
+            <Iconify width={22} icon="mdi:close-circle" sx={{ color: 'error.main' }} />
+          )}
+        </TableCell>
         <TableCell align="right">
           <IconButton onClick={handleOpenPopover}>
             <Iconify icon="eva:more-vertical-fill" />

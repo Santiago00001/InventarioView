@@ -201,14 +201,14 @@ export function ProductsView() {
                 headLabel={[
                   { id: 'number', label: '#', align: 'center' }, // Nueva columna para la numeración
                   { id: 'nombre', label: 'Nombre' },
-                  { id: 'cod', label: 'Cod' },
+                  { id: 'cod', label: 'Cod CTA' },
                   { id: 'item', label: 'Item' },
                   { id: 'categoria', label: 'Categoría' },
                   { id: 'grupo', label: 'Grupo' },
                   { id: 'tipo', label: 'Tipo' },
-                  { id: 'precio', label: 'Precio' },
                   { id: 'presentacion', label: 'Presentacion' },
-                  { id: '' },                ]}
+                  { id: '' },                
+                ]}
               />
               <TableBody>
                 {loading ? (
@@ -247,7 +247,7 @@ export function ProductsView() {
           </TableContainer>
         </Scrollbar>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[5, 10, 25, 100, 500]}
           component="div"
           count={dataFiltered.length}
           rowsPerPage={rowsPerPage}

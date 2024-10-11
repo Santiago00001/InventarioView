@@ -185,14 +185,20 @@ export function ProviderView() {
                   { id: 'number', label: '#', align: 'center' }, // Nueva columna para la numeración
                   { id: 'nit', label: 'Nit' },
                   { id: 'razon_social', label: 'Razón Social' },
+                  { id: 'direccion', label: 'Direccion' },
                   { id: 'ciudad', label: 'Ciudad' },
-                  { id: 'contacto', label: 'Contacto' },
-                  { id: 'correo', label: 'Correo' },
-                  { id: 'act_eco', label: 'Actividad Económica' },
                   { id: 'tel', label: 'Teléfono' },
                   { id: 'cel', label: 'Celular' },
-                  { id: 'ver_ins', label: 'Verificación INS', align: 'center' },
-                  { id: 'ver_dat', label: 'Verificación DAT', align: 'center' },
+                  { id: 'correo', label: 'Correo' },
+                  { id: 'contacto', label: 'Contacto' },
+                  { id: 'act_eco', label: 'Actividad Económica' },
+                  { id: 'fecha_inag', label: 'Fecha Inaguracion' },
+                  { id: 'cod_ins', label: 'Codigo INS' },
+                  { id: 'cod_ins_fecha', label: 'Fecha INS' },
+                  { id: 'ver_ins', label: 'Verificacion INS' },
+                  { id: 'cod_dat', label: 'Codigo DAT' },
+                  { id: 'cod_dat_fecha', label: 'Fecha DAT' },
+                  { id: 'ver_dat', label: 'Verificacion DAT' },
                   { id: 'acciones', label: 'Acciones' },
                 ]}
               />
@@ -233,7 +239,7 @@ export function ProviderView() {
           </TableContainer>
         </Scrollbar>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[5, 10, 25, 100, 500]}
           component="div"
           count={dataFiltered.length}
           rowsPerPage={rowsPerPage}

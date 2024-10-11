@@ -50,7 +50,7 @@ export function applyFilter({
     inputData = inputData.filter(
       (product) =>
         product.nombre.toLowerCase().includes(filterName.toLowerCase()) ||
-        product.codigo.toLowerCase().includes(filterName.toLowerCase()) ||
+        product.codigo.toString().includes(filterName) ||
         product.item.toString().includes(filterName)
     );
   }

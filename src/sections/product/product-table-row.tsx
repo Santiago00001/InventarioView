@@ -19,10 +19,9 @@ export type ProductProps = {
   categoria: string;
   grupo_desc: string;
   tipo: string;
-  precio: number;
   presentacion: string;
-  cta_cont: string;
-  codigo: string;
+  cta_cont: number;
+  codigo: number;
   visible: number;
 };
 
@@ -75,7 +74,6 @@ export function ProductTableRow({ row, selected, index, onSelectRow, onEditProdu
         <TableCell>{row.categoria}</TableCell>
         <TableCell>{row.grupo_desc}</TableCell>
         <TableCell>{row.tipo}</TableCell>
-        <TableCell>{row.precio}</TableCell>
         <TableCell>{row.presentacion}</TableCell>
         <TableCell align="right">
           <IconButton onClick={handleOpenPopover}>

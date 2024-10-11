@@ -11,8 +11,8 @@ export type ProductProps = {
   tipo: string;
   precio: number;
   presentacion: string;
-  cta_cont: string;
-  codigo: string;
+  cta_cont: number;
+  codigo: number;
   visible: number;
 };
 
@@ -32,7 +32,6 @@ export function ProductTable({ products }: ProductTableProps) {
             <TableCell>Categoría</TableCell>
             <TableCell>Grupo</TableCell>
             <TableCell>Tipo</TableCell>
-            <TableCell>Precio</TableCell>
             <TableCell>Presentacion</TableCell>
           </TableRow>
         </TableHead>
@@ -53,9 +52,6 @@ export function ProductTable({ products }: ProductTableProps) {
               </TableCell>
               <TableCell>
                 <Typography variant="body2">{product.tipo}</Typography>
-              </TableCell>
-              <TableCell>
-                <Typography variant="body2">{product.precio}</Typography>
               </TableCell>
               <TableCell>
                 <Typography variant="body2">{product.presentacion}</Typography>

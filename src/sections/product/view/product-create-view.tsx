@@ -17,14 +17,14 @@ interface CreateUserViewProps {
 type Category = 'A' | 'C' | 'M' | 'P' | 'R' | 'S' | 'T';
 
 // Mapeo de categorías a letras
-const categoryToLetterMap: Record<string, Category> = {
-  Aseo: 'A',
-  Cafeteria: 'C',
-  Mercadeo: 'M',
-  Papeleria: 'P',
-  'Repuestos de Mantenimiento': 'R',
-  'Sistemas de insumos': 'S',
-  Tamizaje: 'T',
+const groupToCtaMap: Record<string, { category: Category; cta_cont: number }> = {
+  ASEO: { category: 'A', cta_cont: 511018 },
+  CAFETERIA: { category: 'C', cta_cont: 511020 },
+  MERCADEO: { category: 'M', cta_cont: 511034 },
+  PAPELERÍA: { category: 'P', cta_cont: 511028 },
+  'REPUESTOS DE MTO': { category: 'R', cta_cont: 511012 },
+  'SISTEMAS INSUMOS': { category: 'S', cta_cont: 511058 },
+  TAMIZAJE: { category: 'T', cta_cont: 511068 },
 };
 
 export function CreateProductView({ onClose, onSave }: CreateUserViewProps) {
@@ -35,15 +35,14 @@ export function CreateProductView({ onClose, onSave }: CreateUserViewProps) {
     categoria: '', // Aquí se guardará la letra correspondiente
     grupo_desc: '',
     tipo: '',
-    precio: 0,
     presentacion: '',
-    cta_cont: '',
-    codigo: '',
+    cta_cont: 0,
+    codigo: 0,
     visible: 1,
   });
 
   const handleSave = async () => {
-    if (!formData.nombre || !formData.categoria || !formData.grupo_desc || !formData.tipo || !formData.precio || !formData.presentacion || !formData.cta_cont) {
+    if (!formData.nombre || !formData.categoria || !formData.grupo_desc || !formData.tipo || !formData.presentacion || !formData.cta_cont) {
       alert('Por favor completa todos los campos requeridos.');
       return;
     }
@@ -71,20 +70,23 @@ export function CreateProductView({ onClose, onSave }: CreateUserViewProps) {
             value={formData.grupo_desc}
             onChange={(e: SelectChangeEvent<string>) => {
               const selectedGroup = e.target.value;
+              const groupData = groupToCtaMap[selectedGroup];
+
               setFormData((prevFormData) => ({
                 ...prevFormData,
                 grupo_desc: selectedGroup,
-                categoria: categoryToLetterMap[selectedGroup], // Actualiza la categoría a la letra correspondiente
+                categoria: groupData.category, // Actualiza la categoría
+                cta_cont: groupData.cta_cont, // Actualiza el código contable
               }));
             }}
           >
-            <MenuItem value="Aseo">Aseo</MenuItem>
-            <MenuItem value="Cafeteria">Cafeteria</MenuItem>
-            <MenuItem value="Mercadeo">Mercadeo</MenuItem>
-            <MenuItem value="Papeleria">Papeleria</MenuItem>
-            <MenuItem value="Repuestos de Mantenimiento">Repuestos de Mantenimiento</MenuItem>
-            <MenuItem value="Sistemas de insumos">Sistemas de insumos</MenuItem>
-            <MenuItem value="Tamizaje">Tamizaje</MenuItem>
+            <MenuItem value="ASEO">Aseo</MenuItem>
+            <MenuItem value="CAFETERIA">Cafeteria</MenuItem>
+            <MenuItem value="MERCADEO">Mercadeo</MenuItem>
+            <MenuItem value="PAPELERÍA">Papeleria</MenuItem>
+            <MenuItem value="REPUESTOS DE MTO">Repuestos de Mantenimiento</MenuItem>
+            <MenuItem value="SISTEMAS INSUMOS">Sistemas insumos</MenuItem>
+            <MenuItem value="TAMIZAJE">Tamizaje</MenuItem>
           </Select>
         </FormControl>
         <FormControl fullWidth margin="normal" variant="outlined" required>
@@ -94,19 +96,10 @@ export function CreateProductView({ onClose, onSave }: CreateUserViewProps) {
             value={formData.tipo}
             onChange={(e) => setFormData({ ...formData, tipo: e.target.value })}
           >
-            <MenuItem value="interno">Interno</MenuItem>
-            <MenuItem value="externo">Externo</MenuItem>
+            <MenuItem value="I">Interno</MenuItem>
+            <MenuItem value="E">Externo</MenuItem>
           </Select>
         </FormControl>
-        <TextField
-          label="Precio"
-          type="number"
-          value={formData.precio}
-          onChange={(e) => setFormData({ ...formData, precio: Number(e.target.value) })}
-          fullWidth
-          margin="normal"
-          required
-        />
         <FormControl fullWidth margin="normal" variant="outlined" required>
           <InputLabel>Presentacion</InputLabel>
           <Select
@@ -117,7 +110,7 @@ export function CreateProductView({ onClose, onSave }: CreateUserViewProps) {
             <MenuItem value="UND">Unidad</MenuItem>
             <MenuItem value="GAL">Galon</MenuItem>
             <MenuItem value="PAQ">Paquete</MenuItem>
-            <MenuItem value="FCO">Fco</MenuItem>
+            <MenuItem value="FCO">Frasco</MenuItem>
             <MenuItem value="CAJ">Caja</MenuItem>
             <MenuItem value="BOL">Bolsa</MenuItem>
           </Select>

@@ -7,21 +7,21 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 
 import { visuallyHidden } from './utils';
 
-import type { UserProps } from './agency-table-row';
+import type { AgenciaProps } from './agency-table-row';
 
 // ----------------------------------------------------------------------
 
-type UserTableHeadProps = {
-  orderBy: keyof UserProps; 
+type AgencyTableHeadProps = {
+  orderBy: keyof AgenciaProps; 
   rowCount: number;
   numSelected: number;
   order: 'asc' | 'desc';
-  onSort: (id: keyof UserProps) => void; 
-  headLabel: Array<{ id: keyof UserProps; label: string; align?: 'left' | 'right' | 'center'; width?: string; minWidth?: string }>;
+  onSort: (id: keyof AgenciaProps) => void; 
+  headLabel: Array<{ id: keyof AgenciaProps; label: string; align?: 'left' | 'right' | 'center'; width?: string; minWidth?: string }>;
   onSelectAllRows: (checked: boolean) => void;
 };
 
-export function UserTableHead({
+export function AgencyTableHead({
   order,
   onSort,
   orderBy,
@@ -29,7 +29,7 @@ export function UserTableHead({
   headLabel,
   numSelected,
   onSelectAllRows,
-}: UserTableHeadProps) {
+}: AgencyTableHeadProps) {
   return (
     <TableHead>
       <TableRow>

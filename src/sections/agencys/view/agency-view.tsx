@@ -1,4 +1,6 @@
 // UserView.tsx
+import type { UserProps } from 'src/sections/user/user-table-row';
+
 import axios from 'axios';
 import { useMemo, useState, useEffect } from 'react';
 
@@ -18,7 +20,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 import DialogContentText from '@mui/material/DialogContentText';
 
-import { useCreateUserDialog } from 'src/hooks/use-create-dialog';
+import { useCreateAgencyDialog } from 'src/hooks/age-create-dialog';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
@@ -26,62 +28,59 @@ import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
 import { TableNoData } from '../table-no-data';
-import { UserTableRow } from '../agency-table-row';
-import { EditUserView } from './agency-edit-dialog';
-import { UserTableHead } from '../agency-table-head';
 import { applyFilter, getComparator } from '../utils';
-import { UserTableToolbar } from '../agency-table-toolbar';
+import { EditAgencyView } from './agency-edit-dialog';
+import { AgencyTableHead } from '../agency-table-head';
+import { AgencyTableToolbar } from '../agency-table-toolbar';
+import { AgencyTableRow, type AgenciaProps } from '../agency-table-row';
 
-import type { UserProps, AgenciaProps } from '../agency-table-row';
-
-export function UserView() {
+export function AgencyView() {
   const [filterName, setFilterName] = useState<string>('');
-  const [selectedAgency, setSelectedAgency] = useState<string>('');
+  const [selectedUser, setSelectedUser] = useState<string>('');
   const [selectedStatus, setSelectedStatus] = useState<string>('');
-  const [users, setUsers] = useState<UserProps[]>([]);
   const [agencies, setAgencies] = useState<AgenciaProps[]>([]); // Estado para agencias
+  const [users, setUsers] = useState<UserProps[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [selectedUser, setSelectedUser] = useState<UserProps | null>(null);
+  const [selectedAgency, setSelectedAgency] = useState<AgenciaProps | null>(null);
   const [editMode, setEditMode] = useState<boolean>(false);
   const [selected, setSelected] = useState<string[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const [openConfirmDialog, setOpenConfirmDialog] = useState<boolean>(false); // Controla la apertura del modal
-  const [userToDelete, setUserToDelete] = useState<UserProps | null>(null); // Almacena el usuario que se va a eliminar
+  const [openConfirmDialog, setOpenConfirmDialog] = useState<boolean>(false);
+  const [agencyToDelete, setAgencyToDelete] = useState<AgenciaProps | null>(null);
 
-  const handleSaveUser = async (user: UserProps): Promise<void> => {
-    if (user._id) {
-      // Actualizar usuario existente
+  const handleSaveAgency = async (agency: AgenciaProps): Promise<void> => {
+    if (agency._id) {
+      // Actualizar agencia existente
       try {
-        const response = await axios.put(`${import.meta.env.VITE_APP_API_URL}api/users/${user._id}`, user);
-        const updatedUser: UserProps = response.data;
+        const response = await axios.put(`${import.meta.env.VITE_APP_API_URL}api/agencys/${agency._id}`, agency);
+        const updatedAgency: AgenciaProps = response.data;
 
-        setUsers((prev) =>
-          prev.map((u) => (u._id === updatedUser._id ? updatedUser : u))
+        setAgencies((prev) =>
+          prev.map((a) => (a._id === updatedAgency._id ? updatedAgency : a))
         );
 
         setEditMode(false);
-        setSelectedUser(null);
+        setSelectedAgency(null);
       } catch (error) {
-        console.error('Error actualizando el usuario:', error);
-        alert('Hubo un error actualizando el usuario, por favor intente de nuevo.');
+        console.error('Error actualizando la agencia:', error);
+        alert('Hubo un error actualizando la agencia, por favor intente de nuevo.');
       }
     } else {
-      // Crear nuevo usuario
+      // Crear nueva agencia
       try {
-        const response = await axios.post(`${import.meta.env.VITE_APP_API_URL}api/users`, user);
-        const newUser: UserProps = response.data;
+        const response = await axios.post(`${import.meta.env.VITE_APP_API_URL}api/agencys`, agency);
+        const newAgency: AgenciaProps = response.data;
 
-        setUsers((prev) => [...prev, newUser]);
+        setAgencies((prev) => [...prev, newAgency]);
         setEditMode(false);
       } catch (error) {
-        console.error('Error creando el usuario:', error);
-        alert('Hubo un error creando el usuario, por favor intente de nuevo.');
+        console.error('Error creando la agencia:', error);
+        alert('Hubo un error creando la agencia, por favor intente de nuevo.');
       }
     }
   };
-
 
   const handleSelectRow = (id: string) => {
     const selectedIndex = selected.indexOf(id);
@@ -116,7 +115,7 @@ export function UserView() {
     },
   };
 
-  const { AddUserDialog, handleOpenAddUserModal } = useCreateUserDialog(handleSaveUser, agencies);
+  const { AddAgencyDialog, handleOpenAddAgencyModal } = useCreateAgencyDialog(handleSaveAgency, users); // Cambia a `useCreateAgencyDialog`
 
   useEffect(() => {
     const fetchUsersAndAgencies = async () => {
@@ -125,7 +124,6 @@ export function UserView() {
           axios.get(`${import.meta.env.VITE_APP_API_URL}api/users`),
           axios.get(`${import.meta.env.VITE_APP_API_URL}api/agencys`),
         ]);
-
         setUsers(usersResponse.data);
         setAgencies(agenciesResponse.data); // Guardar agencias en el estado
       } catch (error) {
@@ -134,106 +132,101 @@ export function UserView() {
         setLoading(false);
       }
     };
-
     fetchUsersAndAgencies();
   }, []);
 
-  const dataFiltered: UserProps[] = useMemo(() => applyFilter({
-    inputData: users,
-    comparator: getComparator('asc', 'nombres'),
+  const dataFiltered: AgenciaProps[] = useMemo(() => applyFilter({
+    inputData: agencies,
+    comparator: getComparator('asc', 'nombre'),
     filterName,
-    selectedAgency,
+    selectedUser,
     selectedStatus,
-  }), [users, filterName, selectedAgency, selectedStatus]);
-  
+  }), [agencies, filterName, selectedUser, selectedStatus]);
 
   const notFound = !dataFiltered.length && !!filterName;
 
   const handleClearFilter = () => {
     setFilterName('');
-    setSelectedAgency('');
+    setSelectedUser('');
     setSelectedStatus('');
   };
 
-  const handleEditUser = (user: UserProps) => {
-    setSelectedUser(user);
+  const handleEditAgency = (agency: AgenciaProps) => {
+    setSelectedAgency(agency);
     setEditMode(true);
   };
 
-  const handleDeleteUser = async () => {
-    if (userToDelete) {
+  const handleDeleteAgency = async () => {
+    if (agencyToDelete) {
       try {
-        await axios.delete(`${import.meta.env.VITE_APP_API_URL}api/users/${userToDelete._id}`);
-        setUsers((prev) => prev.filter(user => user._id !== userToDelete._id));
+        await axios.delete(`${import.meta.env.VITE_APP_API_URL}api/agencys/${agencyToDelete._id}`);
+        setAgencies((prev) => prev.filter(a => a._id !== agencyToDelete._id));
         handleCloseConfirmDialog(); // Cerrar el modal después de eliminar
       } catch (error) {
-        console.error('Error eliminando el usuario:', error);
+        console.error('Error eliminando la agencia:', error);
       }
     }
   };
 
-  // Función para abrir el modal de confirmación
-  const handleOpenConfirmDialog = (user: UserProps) => {
-    setUserToDelete(user);
+  const handleOpenConfirmDialog = (agency: AgenciaProps) => {
+    setAgencyToDelete(agency);
     setOpenConfirmDialog(true);
   };
 
-  // Función para cerrar el modal de confirmación
   const handleCloseConfirmDialog = () => {
     setOpenConfirmDialog(false);
-    setUserToDelete(null);
+    setAgencyToDelete(null);
   };
 
   return (
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
         <Typography variant="h4" flexGrow={1}>
-          Usuarios
+          Agencias
         </Typography>
         <Button
           variant="contained"
           color="inherit"
           startIcon={<Iconify icon="mingcute:add-line" />}
-          onClick={handleOpenAddUserModal} // Abrir modal para agregar nuevo usuario
+          onClick={handleOpenAddAgencyModal} // Abrir modal para agregar nueva agencia
         >
-          Nuevo usuario
+          Nueva Agencia
         </Button>
       </Box>
 
       <Card>
-        <UserTableToolbar
+        <AgencyTableToolbar
           numSelected={0} // Ajustar según tu implementación
           filterName={filterName}
           onFilterName={(event: React.ChangeEvent<HTMLInputElement>) => {
             setFilterName(event.target.value);
           }}
           onClearFilter={handleClearFilter}
-          onAddUser={handleOpenAddUserModal} // Vinculado a la función de abrir el modal
-          selectedAgency={selectedAgency}
-          onSelectAgency={(event) => setSelectedAgency(event.target.value as string)}
+          onAddAgency={handleOpenAddAgencyModal} // Vinculado a la función de abrir el modal
+          selectedAgency={selectedUser}
+          onSelectAgency={(event) => setSelectedUser(event.target.value as string)}
           selectedStatus={selectedStatus}
           onSelectStatus={(event) => setSelectedStatus(event.target.value as string)}
-        />
+          agencies={agencies} />
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
-              <UserTableHead
+              <AgencyTableHead
                 order="asc"
-                orderBy="nombres" // Asegúrate de que esto coincida con una clave de UserProps
+                orderBy="nombre" // Asegúrate de que esto coincida con una clave de UserProps
                 rowCount={users.length}
                 numSelected={0}
                 onSort={() => { }}
                 onSelectAllRows={() => { }}
                 headLabel={[
-                  { id: 'number' as keyof UserProps, label: '#', align: 'center' }, // Puede ser un string, pero no colidir con UserProps
-                  { id: 'nombre' as keyof UserProps, label: 'Nombre' },
-                  { id: 'cod' as keyof UserProps, label: 'Codigo' },
-                  { id: 'coordinador' as keyof UserProps, label: 'Coordinador' },
-                  { id: 'director' as keyof UserProps, label: 'Director' },
-                  { id: '' as keyof UserProps, label: '' }, // Asegúrate de que este id sea opcional o válido
+                  { id: 'number' as keyof AgenciaProps, label: '#', align: 'center' }, // Puede ser un string, pero no colidir con UserProps
+                  { id: 'nombres' as keyof AgenciaProps, label: 'Nombre' },
+                  { id: 'cod' as keyof AgenciaProps, label: 'Codigo' },
+                  { id: 'coordinador' as keyof AgenciaProps, label: 'Coordinador' },
+                  { id: 'director' as keyof AgenciaProps, label: 'Director' },
+                  { id: '' as keyof AgenciaProps, label: '' }, // Asegúrate de que este id sea opcional o válido
                 ]}
               />
-
               <TableBody>
                 {loading ? (
                   <TableRow>
@@ -241,32 +234,34 @@ export function UserView() {
                   </TableRow>
                 ) : (
                   dataFiltered
-                    .slice(table.page * table.rowsPerPage, table.page * table.rowsPerPage + table.rowsPerPage)
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, index) => (
-                      <UserTableRow
+                      <AgencyTableRow
                         key={row._id}
                         row={row}
-                        selected={table.selected.includes(row._id.toString())}
-                        onSelectRow={() => table.onSelectRow(row._id.toString())}
-                        onEditUser={handleEditUser}
-                        onDeleteUser={async () => handleOpenConfirmDialog(row)} // Abrir modal al eliminar
-                        index={table.page * table.rowsPerPage + index + 1} // Calcula el número según la página actual
+                        selected={false} // Ajustar selección si es necesario
+                        onSelectRow={() => handleSelectRow(row._id)}
+                        onEditAgency={handleEditAgency}
+                        onDeleteAgency={async () => handleOpenConfirmDialog(row)}
+                        index={table.page * table.rowsPerPage + index + 1}
+                        users={users}
                       />
                     ))
                 )}
                 {notFound && <TableNoData searchQuery={filterName} />}
               </TableBody>
+
             </Table>
           </TableContainer>
         </Scrollbar>
+
         <TablePagination
           component="div"
-          page={table.page} // Asegúrate de que 'table.page' está definido
-          count={users.length}
-          rowsPerPage={table.rowsPerPage}
-          onPageChange={table.onChangePage} // Asegúrate de que esta función está definida
-          rowsPerPageOptions={[5, 10, 25, 100]}
-          onRowsPerPageChange={table.onChangeRowsPerPage} // Asegúrate de que esta función está definida
+          count={dataFiltered.length}
+          page={page}
+          onPageChange={table.onChangePage}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={table.onChangeRowsPerPage}
         />
       </Card>
 
@@ -278,37 +273,36 @@ export function UserView() {
         <DialogTitle>Confirmar Eliminación</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            ¿Estás seguro de que deseas eliminar a {userToDelete?.nombres} {userToDelete?.apellidos}? Esta acción no se puede deshacer.
+            ¿Estás seguro de que deseas eliminar a {agencyToDelete?.nombre}? Esta acción no se puede deshacer.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseConfirmDialog} color="primary">
             Cancelar
           </Button>
-          <Button onClick={handleDeleteUser} color="secondary">
+          <Button onClick={handleDeleteAgency} color="secondary">
             Eliminar
           </Button>
         </DialogActions>
       </Dialog>
 
-
       {/* Modal para editar usuario */}
       <Dialog open={editMode} onClose={() => setEditMode(false)}>
         <DialogTitle>Editar Usuario</DialogTitle>
         <DialogContent>
-          {selectedUser && (
-            <EditUserView
-              user={selectedUser}
+          {selectedAgency && (
+            <EditAgencyView
+              agency={selectedAgency}
               onClose={() => setEditMode(false)}
-              onSave={handleSaveUser}
-              agencies={agencies}
+              onSave={handleSaveAgency}
+              users={users}
             />
           )}
         </DialogContent>
       </Dialog>
 
       {/* Modal para agregar usuario */}
-      {AddUserDialog()}
+      {AddAgencyDialog()}
 
     </DashboardContent>
   );

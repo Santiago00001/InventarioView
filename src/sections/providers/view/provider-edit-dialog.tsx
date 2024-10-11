@@ -20,10 +20,20 @@ interface EditProviderViewProps {
 }
 
 export function EditProviderView({ provider, onClose, onSave }: EditProviderViewProps) {
-  const [formData, setFormData] = useState<ProviderProps>(provider);
+  const [formData, setFormData] = useState<ProviderProps>({
+    ...provider,
+    fecha_inag: new Date(provider.fecha_inag), // Convierte a Date
+    cod_ins_fecha: new Date(provider.cod_ins_fecha), // Convierte a Date
+    cod_dat_fecha: new Date(provider.cod_dat_fecha), // Convierte a Date
+  });
 
   useEffect(() => {
-    setFormData(provider);
+    setFormData({
+      ...provider,
+      fecha_inag: new Date(provider.fecha_inag), // Asegura que se convierta a Date
+      cod_ins_fecha: new Date(provider.cod_ins_fecha), // Asegura que se convierta a Date
+      cod_dat_fecha: new Date(provider.cod_dat_fecha), // Asegura que se convierta a Date
+    });
   }, [provider]);
 
   const handleSave = async () => {
@@ -131,7 +141,7 @@ export function EditProviderView({ provider, onClose, onSave }: EditProviderView
           margin="normal"
         />
         <TextField
-          label="Fecha de Ingreso"
+          label="Fecha de Inscripción"
           type="date"
           InputLabelProps={{
             shrink: true,
@@ -162,7 +172,7 @@ export function EditProviderView({ provider, onClose, onSave }: EditProviderView
           margin="normal"
         />
         <TextField
-          label="Fecha de Ingreso"
+          label="Fecha de Inscripción DAT"
           type="date"
           InputLabelProps={{
             shrink: true,

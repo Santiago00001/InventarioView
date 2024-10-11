@@ -1,4 +1,5 @@
 import type { SelectChangeEvent } from '@mui/material';
+import type { AgenciaProps } from 'src/sections/agencys/agency-table-row';
 
 import { useState, useEffect } from 'react';
 
@@ -13,7 +14,7 @@ import { DashboardContent } from 'src/layouts/dashboard';
 
 import { Iconify } from 'src/components/iconify';
 
-import type { UserProps, AgenciaProps } from '../user-table-row';
+import type { UserProps } from '../user-table-row';
 
 interface EditUserViewProps {
   user: UserProps;
@@ -42,7 +43,7 @@ export function EditUserView({ user, onClose, onSave, agencies }: EditUserViewPr
         ...formData,
         correo: `${formData.correo}@coopserp.com`, // Concatenar el dominio aquí
       };
-      
+
       await onSave(updatedUserData); // Guardamos los cambios
       onClose(); // Cierra el modal
     } catch (error) {
@@ -106,13 +107,21 @@ export function EditUserView({ user, onClose, onSave, agencies }: EditUserViewPr
           fullWidth
           margin="normal"
         />
-        <TextField
-          label="Cargo"
-          value={formData.cargo}
-          onChange={(e) => setFormData({ ...formData, cargo: e.target.value })}
-          fullWidth
-          margin="normal"
-        />
+        <FormControl fullWidth margin="normal" variant="outlined" required>
+          <InputLabel>Cargo</InputLabel>
+          <Select
+            label="Cargo"
+            value={formData.cargo}
+            onChange={(e) => setFormData({ ...formData, cargo: e.target.value })}
+          >
+            <MenuItem value="DIRECTOR DE AGENCIA">DIRECTOR DE AGENCIA</MenuItem>
+            <MenuItem value="JEFE ÁREA REPORTES">JEFE ÁREA REPORTES</MenuItem>
+            <MenuItem value="JEFE DEPARTAMENTO">JEFE DEPARTAMENTO</MenuItem>
+            <MenuItem value="DIRECTOR GENERAL">DIRECTOR GENERAL</MenuItem>
+            <MenuItem value="OFICIAL DE CUMPLIMIENTO">OFICIAL DE CUMPLIMIENTO</MenuItem>
+            <MenuItem value="COORDINADOR DE AGENCIAS">COORDINADOR DE AGENCIAS</MenuItem>
+          </Select>
+        </FormControl>
         <TextField
           label="Correo (sin @coopserp.com)"
           value={formData.correo}

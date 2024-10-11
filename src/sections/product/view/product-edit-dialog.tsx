@@ -25,14 +25,14 @@ interface EditProductViewProps {
 type Category = 'A' | 'C' | 'M' | 'P' | 'R' | 'S' | 'T';
 
 // Mapeo de categorías a letras
-const categoryToLetterMap: Record<string, Category> = {
-  Aseo: 'A',
-  Cafeteria: 'C',
-  Mercadeo: 'M',
-  Papeleria: 'P',
-  'Repuestos de Mantenimiento': 'R',
-  'Sistemas de insumos': 'S',
-  Tamizaje: 'T',
+const groupToCtaMap: Record<string, { category: Category; cta_cont: number }> = {
+  ASEO: { category: 'A', cta_cont: 511018 },
+  CAFETERIA: { category: 'C', cta_cont: 511020 },
+  MERCADEO: { category: 'M', cta_cont: 511034 },
+  PAPELERÍA: { category: 'P', cta_cont: 511028 },
+  'REPUESTOS DE MTO': { category: 'R', cta_cont: 511012 },
+  'SISTEMAS INSUMOS': { category: 'S', cta_cont: 511058 },
+  TAMIZAJE: { category: 'T', cta_cont: 511068 },
 };
 
 async function updateProduct(ProductId: string, productData: ProductProps) {
@@ -81,7 +81,7 @@ export function EditProductView({ product, onClose, onSave }: EditProductViewPro
       <Card sx={{ p: 3 }}>
         <TextField
           label="ID"
-          value={formData.item} // Mostrar el ID del producto si es necesario
+          value={formData._id}
           disabled
           fullWidth
           margin="normal"
@@ -97,25 +97,29 @@ export function EditProductView({ product, onClose, onSave }: EditProductViewPro
           <InputLabel>Grupo</InputLabel>
           <Select
             label="Grupo"
-            value={formData.grupo_desc} // Asegurarse de que esté mostrando el nombre del grupo
+            value={formData.grupo_desc}
             onChange={(e: SelectChangeEvent<string>) => {
               const selectedGroup = e.target.value;
+              const groupData = groupToCtaMap[selectedGroup];
+
               setFormData((prevFormData) => ({
                 ...prevFormData,
                 grupo_desc: selectedGroup,
-                categoria: categoryToLetterMap[selectedGroup], // Actualiza la categoría a la letra correspondiente
+                categoria: groupData.category, // Actualiza la categoría
+                cta_cont: groupData.cta_cont, // Actualiza el código contable
               }));
             }}
           >
-            <MenuItem value="Aseo">Aseo</MenuItem>
-            <MenuItem value="Cafeteria">Cafeteria</MenuItem>
-            <MenuItem value="Mercadeo">Mercadeo</MenuItem>
-            <MenuItem value="Papeleria">Papeleria</MenuItem>
-            <MenuItem value="Repuestos de Mantenimiento">Repuestos de Mantenimiento</MenuItem>
-            <MenuItem value="Sistemas de insumos">Sistemas de insumos</MenuItem>
-            <MenuItem value="Tamizaje">Tamizaje</MenuItem>
+            <MenuItem value="ASEO">Aseo</MenuItem>
+            <MenuItem value="CAFETERIA">Cafeteria</MenuItem>
+            <MenuItem value="MERCADEO">Mercadeo</MenuItem>
+            <MenuItem value="PAPELERÍA">Papeleria</MenuItem>
+            <MenuItem value="REPUESTOS DE MTO">Repuestos de Mantenimiento</MenuItem>
+            <MenuItem value="SISTEMAS INSUMOS">Sistemas insumos</MenuItem>
+            <MenuItem value="TAMIZAJE">Tamizaje</MenuItem>
           </Select>
         </FormControl>
+
         <FormControl fullWidth margin="normal" variant="outlined" required>
           <InputLabel>Tipo</InputLabel>
           <Select
@@ -127,13 +131,6 @@ export function EditProductView({ product, onClose, onSave }: EditProductViewPro
             <MenuItem value="E">Externo</MenuItem>
           </Select>
         </FormControl>
-        <TextField
-          label="Precio"
-          value={formData.precio}
-          onChange={(e) => setFormData({ ...formData, precio: parseFloat(e.target.value) })}
-          fullWidth
-          margin="normal"
-        />
         <FormControl fullWidth margin="normal" variant="outlined" required>
           <InputLabel>Presentacion</InputLabel>
           <Select
@@ -161,11 +158,10 @@ export function EditProductView({ product, onClose, onSave }: EditProductViewPro
         <TextField
           label="Código"
           value={formData.codigo}
-          onChange={(e) => setFormData({ ...formData, codigo: e.target.value })}
+          onChange={(e) => setFormData({ ...formData, codigo: Number(e.target.value) })} // Convierte a número
           fullWidth
           margin="normal"
         />
-
         <Button variant="contained" sx={{ mr: 2 }} onClick={handleSave} startIcon={<Iconify icon="mingcute:save-line" />}>
           Guardar
         </Button>

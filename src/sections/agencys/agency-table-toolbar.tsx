@@ -15,29 +15,33 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import { Iconify } from 'src/components/iconify';
 
-type UserTableToolbarProps = {
+import type { AgenciaProps } from './agency-table-row';
+
+type AgencyTableToolbarProps = {
   numSelected: number;
   filterName: string;
   onFilterName: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onClearFilter: () => void;
-  onAddUser: () => void;
+  onAddAgency: () => void;
+  agencies: AgenciaProps[]; // Añadir la lista de agencias como prop
   selectedAgency: string;
   onSelectAgency: (event: SelectChangeEvent<string>) => void;
   selectedStatus: string;
   onSelectStatus: (event: SelectChangeEvent<string>) => void;
 };
 
-export function UserTableToolbar({
+export function AgencyTableToolbar({
   numSelected,
   filterName,
   onFilterName,
   onClearFilter,
-  onAddUser,
+  onAddAgency,
+  agencies, // Recibir la lista de agencias
   selectedAgency,
   onSelectAgency,
   selectedStatus,
   onSelectStatus,
-}: UserTableToolbarProps) {
+}: AgencyTableToolbarProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -74,17 +78,17 @@ export function UserTableToolbar({
         </Typography>
       ) : (
         <OutlinedInput
-            fullWidth
-            value={filterName}
-            onChange={onFilterName}
-            placeholder="Buscar..."
-            startAdornment={
-              <InputAdornment position="start">
-                <Iconify width={20} icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
-              </InputAdornment>
-            }
-            sx={{ maxWidth: 320 }}
-          />
+          fullWidth
+          value={filterName}
+          onChange={onFilterName}
+          placeholder="Buscar..."
+          startAdornment={
+            <InputAdornment position="start">
+              <Iconify width={20} icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
+            </InputAdornment>
+          }
+          sx={{ maxWidth: 320 }}
+        />
       )}
 
       {numSelected > 0 ? (
@@ -123,9 +127,11 @@ export function UserTableToolbar({
                 <MenuItem value="">
                   <em>Agencia</em>
                 </MenuItem>
-                <MenuItem value="Agencia A">Agencia A</MenuItem>
-                <MenuItem value="Agencia B">Agencia B</MenuItem>
-                <MenuItem value="Agencia C">Agencia C</MenuItem>
+                {agencies.map((agency) => (
+                  <MenuItem key={agency._id} value={agency._id}>
+                    {agency.nombre}
+                  </MenuItem>
+                ))}
               </Select>
               <Select
                 value={selectedStatus}

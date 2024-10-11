@@ -28,7 +28,7 @@ export const navData = [
     icon: icon('ic-equipo'),
   },
   {
-    title: 'Agencias',
+    title: 'Dependencias',
     path: '/agencys',
     icon: icon('ic-equipo'),
   }

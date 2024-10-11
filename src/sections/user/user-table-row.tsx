@@ -13,14 +13,8 @@ import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 
-export type AgenciaProps = {
-  _id: string;
-  item: number;
-  cod: number;
-  nombre: string;
-  coordinador: string;
-  director: string;
-};
+import type { AgenciaProps } from '../agencys/agency-table-row';
+
 
 export type UserProps = {
   _id: string;

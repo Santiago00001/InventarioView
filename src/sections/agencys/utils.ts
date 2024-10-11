@@ -1,4 +1,4 @@
-import type { UserProps } from './agency-table-row';
+import type { AgenciaProps } from "./agency-table-row";
 
 // ----------------------------------------------------------------------
 
@@ -53,17 +53,17 @@ export function getComparator<Key extends keyof any>(
 // ----------------------------------------------------------------------
 
 type ApplyFilterProps = {
-  inputData: UserProps[];
+  inputData: AgenciaProps[];
   filterName: string;
-  selectedAgency: string;
+  selectedUser: string;
   selectedStatus: string;
   comparator: (a: any, b: any) => number;
 };
 
-export function applyFilter({ inputData, comparator, filterName, selectedAgency, selectedStatus }: ApplyFilterProps) {
+export function applyFilter({ inputData, comparator, filterName, selectedUser, selectedStatus }: ApplyFilterProps) {
   console.log('Input Data:', inputData); // Verifica el contenido
   console.log('Filter Name:', filterName);
-  console.log('Selected Agency:', selectedAgency);
+  console.log('Selected Agency:', selectedUser);
   console.log('Selected Status:', selectedStatus);
 
   const stabilizedThis = inputData.map((el, index) => [el, index] as const);
@@ -79,18 +79,13 @@ export function applyFilter({ inputData, comparator, filterName, selectedAgency,
   if (filterName) {
     inputData = inputData.filter(
       (user) =>
-        user.nombres.toLowerCase().includes(filterName.toLowerCase()) ||
-        user.apellidos.toLowerCase().includes(filterName.toLowerCase()) ||
-        user.cc.toString().includes(filterName.toLowerCase())
+        user.nombre.toLowerCase().includes(filterName.toLowerCase()) ||
+        user.cod.toString().includes(filterName.toLowerCase())
     );
   }
 
-  if (selectedAgency) {
-    inputData = inputData.filter((user) => user.agencia.nombre === selectedAgency);
-  }
-
-  if (selectedStatus) {
-    inputData = inputData.filter((user) => user.status === selectedStatus);
+  if (selectedUser) {
+    inputData = inputData.filter((user) => user.nombre === selectedUser);
   }
 
   console.log('Filtered Data:', inputData); // Verifica el resultado filtrado

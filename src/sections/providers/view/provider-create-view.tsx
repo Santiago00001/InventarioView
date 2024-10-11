@@ -139,7 +139,6 @@ export function CreateProviderView({ onClose, onSave }: CreateProviderViewProps)
           margin="normal"
           required
         />
-
         <Button
           variant="contained"
           sx={{ mr: 2 }}

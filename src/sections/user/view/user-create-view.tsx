@@ -1,12 +1,13 @@
 import type { SelectChangeEvent } from '@mui/material';
+import type { AgenciaProps } from 'src/sections/agencys/agency-table-row';
 
 import { useState } from 'react';
 
-import { Box, Card, Button, Select, MenuItem, TextField, Typography, InputLabel, FormControl, InputAdornment  } from '@mui/material';
+import { Box, Card, Button, Select, MenuItem, TextField, Typography, InputLabel, FormControl, InputAdornment } from '@mui/material';
 
 import { Iconify } from 'src/components/iconify';
 
-import type { UserProps, AgenciaProps } from '../user-table-row';
+import type { UserProps } from '../user-table-row';
 
 interface CreateUserViewProps {
   onClose: () => void;
@@ -41,7 +42,7 @@ export function CreateUserView({ onClose, onSave, agencies }: CreateUserViewProp
     const formattedNombres = formData.nombres.toLowerCase().replace(/(?:^|\s)\S/g, (a) => a.toUpperCase());
     const formattedApellidos = formData.apellidos.toUpperCase();
     const formattedCargo = formData.cargo.toUpperCase();
-    
+
     // Crear un nuevo objeto con los datos formateados
     const newUserData = {
       ...formData,
@@ -63,7 +64,7 @@ export function CreateUserView({ onClose, onSave, agencies }: CreateUserViewProp
       alert('Por favor completa todos los campos requeridos.');
       return;
     }
-    
+
     await onSave(newUserData);
     onClose();
   };
@@ -114,14 +115,21 @@ export function CreateUserView({ onClose, onSave, agencies }: CreateUserViewProp
           margin="normal"
           required
         />
-        <TextField
-          label="Cargo"
-          value={formData.cargo}
-          onChange={(e) => setFormData({ ...formData, cargo: e.target.value })}
-          fullWidth
-          margin="normal"
-          required
-        />
+        <FormControl fullWidth margin="normal" variant="outlined" required>
+          <InputLabel>Cargo</InputLabel>
+          <Select
+            label="Cargo"
+            value={formData.cargo}
+            onChange={(e) => setFormData({ ...formData, cargo: e.target.value })}
+          >
+            <MenuItem value="DIRECTOR DE AGENCIA">DIRECTOR DE AGENCIA</MenuItem>
+            <MenuItem value="JEFE ÁREA REPORTES">JEFE ÁREA REPORTES</MenuItem>
+            <MenuItem value="JEFE DEPARTAMENTO">JEFE DEPARTAMENTO</MenuItem>
+            <MenuItem value="DIRECTOR GENERAL">DIRECTOR GENERAL</MenuItem>
+            <MenuItem value="OFICIAL DE CUMPLIMIENTO">OFICIAL DE CUMPLIMIENTO</MenuItem>
+            <MenuItem value="COORDINADOR DE AGENCIAS">COORDINADOR DE AGENCIAS</MenuItem>
+          </Select>
+        </FormControl>
         <TextField
           label="Correo"
           value={formData.correo}
