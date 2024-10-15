@@ -50,8 +50,8 @@ export function applyFilter({
     inputData = inputData.filter(
       (provider) =>
         provider.razon_social.toLowerCase().includes(filterName.toLowerCase()) ||
-      provider.contacto.toLowerCase().includes(filterName.toLowerCase()) ||
-      provider.nit.toString().includes(filterName)
+        provider.contacto.toLowerCase().includes(filterName.toLowerCase()) ||
+        provider.nit.toString().includes(filterName)
     );
   }
 

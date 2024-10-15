@@ -3,7 +3,7 @@ import type { SelectChangeEvent } from '@mui/material';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import axios from 'axios';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -46,10 +46,15 @@ export function ProductsView() {
   const [selectedProduct, setSelectedProduct] = useState<ProductProps | null>(null);
   const [editMode, setEditMode] = useState<boolean>(false);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedTipo, setSelectedTipo] = useState<string>('');
+  const [selectedPresentacion, setSelectedPresentacion] = useState<string>('');
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const [searchField, setSearchField] = useState("nombre");
+  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
+  const [orderBy, setOrderBy] = useState<string>('nombre');
+
 
   const handleSelectRow = (id: number) => {
     setSelectedRows((prev) =>
@@ -107,18 +112,27 @@ export function ProductsView() {
 
   const dataFiltered: ProductProps[] = applyFilter({
     inputData: products,
-    comparator: getComparator('asc', 'nombre'),
+    comparator: getComparator(order, orderBy), // Asegúrate de usar el estado actual
     filterName,
     selectedCategory,
     selectedTipo,
+    selectedPresentacion,
+    searchField,
   });
 
+  const handleRequestSort = (property: string) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
+  
   const notFound = !dataFiltered.length && !!filterName;
 
   const handleClearFilter = () => {
     setFilterName('');
     setSelectedCategory('');
     setSelectedTipo('');
+    setSearchField(''); // Limpiar también el campo de búsqueda adicional
   };
 
   const handleEditProduct = (product: ProductProps) => {
@@ -131,6 +145,10 @@ export function ProductsView() {
     setSelectedProduct(null); // Limpiar el producto seleccionado
   };
 
+  const handleSearchFieldChange = (event: SelectChangeEvent<string>) => {
+    setSearchField(event.target.value); // Asegúrate de manejar correctamente el evento
+  };
+
   const handleDeleteProduct = async (_id: string) => {
     const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar este producto?");
     if (confirmDelete) {
@@ -141,18 +159,6 @@ export function ProductsView() {
         console.error('Error deleting product:', error);
       }
     }
-  };
-
-  const table = {
-    page,
-    rowsPerPage,
-    onSelectRow: handleSelectRow,
-    onResetPage: () => setPage(0),
-    onChangePage: (event: unknown, newPage: number) => setPage(newPage),
-    onChangeRowsPerPage: (event: React.ChangeEvent<HTMLInputElement>) => {
-      setRowsPerPage(parseInt(event.target.value, 10));
-      setPage(0);
-    },
   };
 
   const { AddProductDialog, handleOpenAddProductModal } = useCreateProductDialog(handleSaveProduct);
@@ -177,39 +183,41 @@ export function ProductsView() {
         <ProductTableToolbar
           numSelected={0}
           filterName={filterName}
-          onFilterName={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setFilterName(event.target.value);
-          }}
+          onFilterName={(event: React.ChangeEvent<HTMLInputElement>) => setFilterName(event.target.value)}
           onClearFilter={handleClearFilter}
           onAddProduct={handleOpenAddProductModal}
           selectedCategory={selectedCategory}
-          onSelectedCategory={(event: SelectChangeEvent<string>) => setSelectedCategory(event.target.value)} // Manejador ajustado
+          onSelectedCategory={(event: SelectChangeEvent<string>) => setSelectedCategory(event.target.value)}
           selectedTipo={selectedTipo}
-          onselectedTipo={(event: SelectChangeEvent<string>) => setSelectedTipo(event.target.value)} // Manejador ajustado
+          onselectedTipo={(event: SelectChangeEvent<string>) => setSelectedTipo(event.target.value)}
+          selectedPresentacion={selectedPresentacion}
+          onselectedPresentacion={(event: SelectChangeEvent<string>) => setSelectedPresentacion(event.target.value)}
+          searchField={searchField} // Pasar searchField como prop
+          onSearchFieldChange={handleSearchFieldChange} // Pasar el manejador como prop
         />
-
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
               <ProductTableHead
-                order="asc"
-                orderBy="nombre"
+                order={order}
+                orderBy={orderBy}
                 rowCount={products.length}
                 numSelected={0}
-                onSort={() => { }}
+                onSort={handleRequestSort} // Pasa el manejador aquí
                 onSelectAllRows={() => { }}
                 headLabel={[
-                  { id: 'number', label: '#', align: 'center' }, // Nueva columna para la numeración
+                  { id: 'item', label: '#', align: 'center' },
                   { id: 'nombre', label: 'Nombre' },
-                  { id: 'cod', label: 'Cod CTA' },
-                  { id: 'item', label: 'Item' },
+                  { id: 'cta_cont', label: 'CTA' },
+                  { id: 'codigo', label: 'COD' },
                   { id: 'categoria', label: 'Categoría' },
                   { id: 'grupo', label: 'Grupo' },
                   { id: 'tipo', label: 'Tipo' },
-                  { id: 'presentacion', label: 'Presentacion' },
-                  { id: '' },                
+                  { id: 'presentacion', label: 'Presentación' },
+                  { id: '' },
                 ]}
               />
+
               <TableBody>
                 {loading ? (
                   <TableRow>
@@ -226,7 +234,6 @@ export function ProductsView() {
                         onSelectRow={() => handleSelectRow(row.item)} // Manejo de selección de fila
                         onEditProduct={handleEditProduct}
                         onDeleteProduct={handleDeleteProduct}
-                        index={table.page * table.rowsPerPage + index + 1} // Calcula el número según la página actual
                       />
                     ))
                 )}
@@ -275,73 +282,4 @@ export function ProductsView() {
       </Dialog>
     </DashboardContent>
   );
-}
-
-// ----------------------------------------------------------------------
-
-export function useTable() {
-  const [page, setPage] = useState(0);
-  const [orderBy, setOrderBy] = useState('nombres');
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [selected, setSelected] = useState<string[]>([]);
-  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
-
-  const onSort = useCallback(
-    (id: string) => {
-      const isAsc = orderBy === id && order === 'asc';
-      setOrder(isAsc ? 'desc' : 'asc');
-      setOrderBy(id);
-    },
-    [order, orderBy]
-  );
-
-  const onSelectAllRows = useCallback((checked: boolean, newSelecteds: string[]) => {
-    if (checked) {
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  }, []);
-
-  const onSelectRow = useCallback(
-    (inputValue: string) => {
-      const newSelected = selected.includes(inputValue)
-        ? selected.filter((value) => value !== inputValue)
-        : [...selected, inputValue];
-
-      setSelected(newSelected);
-    },
-    [selected]
-  );
-
-  const onResetPage = useCallback(() => {
-    setPage(0);
-  }, []);
-
-  const onChangePage = useCallback((event: unknown, newPage: number) => {
-    setPage(newPage);
-  }, []);
-
-  const onChangeRowsPerPage = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const newRowsPerPage = parseInt(event.target.value, 10);
-      setRowsPerPage(newRowsPerPage);
-      setPage(0);
-    },
-    []
-  );
-
-  return {
-    page,
-    order,
-    onSort,
-    orderBy,
-    selected,
-    rowsPerPage,
-    onSelectRow,
-    onResetPage,
-    onChangePage,
-    onSelectAllRows,
-    onChangeRowsPerPage,
-  };
 }

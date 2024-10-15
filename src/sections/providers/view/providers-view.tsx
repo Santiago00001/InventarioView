@@ -44,10 +44,12 @@ export function ProviderView() {
   const [selectedProduct, setSelectedProduct] = useState<ProviderProps | null>(null);
   const [editMode, setEditMode] = useState<boolean>(false);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedTipo, setSelectedTipo] = useState<string>('');
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
+  const [orderBy, setOrderBy] = useState<string>('razon_social');
 
   const handleSelectRow = (id: string) => {
     setSelectedRows((prev) =>
@@ -102,11 +104,17 @@ export function ProviderView() {
 
   const dataFiltered: ProviderProps[] = applyFilter({
     inputData: providers,
-    comparator: getComparator('asc', 'nombre'),
+    comparator: getComparator(order, orderBy), // Asegúrate de usar el estado actual
     filterName,
     selectedCategory,
     selectedTipo,
   });
+
+  const handleRequestSort = (property: string) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
 
   const notFound = !dataFiltered.length && !!filterName;
 
@@ -175,11 +183,11 @@ export function ProviderView() {
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
               <ProviderTableHead
-                order="asc"
-                orderBy="nombre"
+                order={order}
+                orderBy={orderBy}
                 rowCount={providers.length}
                 numSelected={0}
-                onSort={() => { }}
+                onSort={handleRequestSort} // Pasa el manejador aquí
                 onSelectAllRows={() => { }}
                 headLabel={[
                   { id: 'number', label: '#', align: 'center' }, // Nueva columna para la numeración

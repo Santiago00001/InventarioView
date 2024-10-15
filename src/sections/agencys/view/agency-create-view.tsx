@@ -4,7 +4,7 @@ import type { AgenciaProps } from 'src/sections/agencys/agency-table-row';
 
 import { useState } from 'react';
 
-import { Box, Card, Button, TextField, Typography } from '@mui/material';
+import { Box, Card, Button, Select, MenuItem, TextField, Typography, InputLabel, FormControl } from '@mui/material';
 
 import { Iconify } from 'src/components/iconify';
 
@@ -21,7 +21,7 @@ export function CreateAgencyView({ onClose, onSave, users }: CreateAgencyViewPro
     nombre: '',
     cod: 0,
     coordinador: '',
-    director: '',
+    director: 'Sin Director',
   }
 );
 
@@ -62,22 +62,21 @@ export function CreateAgencyView({ onClose, onSave, users }: CreateAgencyViewPro
           margin="normal"
           required
         />
-        <TextField
-          label="Coordinador"
-          value={formData.coordinador}
-          onChange={handleInputChange('coordinador')}
-          fullWidth
-          margin="normal"
-          required
-        />
-        <TextField
-          label="Director"
-          value={formData.director}
-          onChange={handleInputChange('director')}
-          fullWidth
-          margin="normal"
-          required
-        />
+        <FormControl fullWidth margin="normal" variant="outlined" required>
+          <InputLabel>Coordinador</InputLabel>
+          <Select
+            label="Coordinador"
+            value={formData.coordinador}
+            onChange={(e) => setFormData({ ...formData, coordinador: e.target.value })}
+          >
+            <MenuItem value="C5">Coordinador 5</MenuItem>
+            <MenuItem value="C4">Coordinador 4</MenuItem>
+            <MenuItem value="C3">Coordinador 3</MenuItem>
+            <MenuItem value="C2">Coordinador 2</MenuItem>
+            <MenuItem value="C1">Coordinador 1</MenuItem>
+            <MenuItem value="NA">No Aplica</MenuItem>
+          </Select>
+        </FormControl>
         <Button
           variant="contained"
           sx={{ mr: 2 }}

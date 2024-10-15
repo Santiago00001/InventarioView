@@ -2,7 +2,7 @@
 import type { AgenciaProps } from 'src/sections/agencys/agency-table-row';
 
 import axios from 'axios';
-import { useMemo, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -36,7 +36,6 @@ import { UserTableToolbar } from '../user-table-toolbar';
 
 import type { UserProps } from '../user-table-row';
 
-
 export function UserView() {
   const [filterName, setFilterName] = useState<string>('');
   const [selectedAgency, setSelectedAgency] = useState<string>('');
@@ -48,22 +47,36 @@ export function UserView() {
   const [editMode, setEditMode] = useState<boolean>(false);
   const [selected, setSelected] = useState<string[]>([]);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
+  const [orderBy, setOrderBy] = useState<string>('nombres');
 
   const [openConfirmDialog, setOpenConfirmDialog] = useState<boolean>(false); // Controla la apertura del modal
   const [userToDelete, setUserToDelete] = useState<UserProps | null>(null); // Almacena el usuario que se va a eliminar
 
   const handleSaveUser = async (user: UserProps): Promise<void> => {
     if (user._id) {
-      // Actualizar usuario existente
+      // Usuario existente
       try {
-        const response = await axios.put(`${import.meta.env.VITE_APP_API_URL}api/users/${user._id}`, user);
-        const updatedUser: UserProps = response.data;
-
-        setUsers((prev) =>
-          prev.map((u) => (u._id === updatedUser._id ? updatedUser : u))
-        );
-
+        if (user.status) {
+          // Actualizar solo el estado del usuario
+          await axios.put(`${import.meta.env.VITE_APP_API_URL}api/users/${user._id}/status`, { status: user.status });
+  
+          // Actualizar el estado del usuario en el estado local
+          setUsers((prev) =>
+            prev.map((u) => (u._id === user._id ? { ...u, status: user.status } : u))
+          );
+        } else {
+          // Actualizar toda la información del usuario
+          const response = await axios.put(`${import.meta.env.VITE_APP_API_URL}api/users/${user._id}`, user);
+          const updatedUser: UserProps = response.data;
+  
+          // Actualizar el usuario en el estado local
+          setUsers((prev) =>
+            prev.map((u) => (u._id === updatedUser._id ? updatedUser : u))
+          );
+        }
+        
         setEditMode(false);
         setSelectedUser(null);
       } catch (error) {
@@ -75,7 +88,7 @@ export function UserView() {
       try {
         const response = await axios.post(`${import.meta.env.VITE_APP_API_URL}api/users`, user);
         const newUser: UserProps = response.data;
-
+  
         setUsers((prev) => [...prev, newUser]);
         setEditMode(false);
       } catch (error) {
@@ -83,7 +96,7 @@ export function UserView() {
         alert('Hubo un error creando el usuario, por favor intente de nuevo.');
       }
     }
-  };
+  };  
 
   const handleSelectRow = (id: string) => {
     const selectedIndex = selected.indexOf(id);
@@ -140,14 +153,13 @@ export function UserView() {
     fetchUsersAndAgencies();
   }, []);
 
-  const dataFiltered: UserProps[] = useMemo(() => applyFilter({
+  const dataFiltered: UserProps[] = applyFilter({
     inputData: users,
-    comparator: getComparator('asc', 'nombres'),
+    comparator: getComparator(order, orderBy), // Asegúrate de usar el estado actual
     filterName,
     selectedAgency,
     selectedStatus,
-  }), [users, filterName, selectedAgency, selectedStatus]);
-  
+  });
 
   const notFound = !dataFiltered.length && !!filterName;
 
@@ -186,6 +198,12 @@ export function UserView() {
     setUserToDelete(null);
   };
 
+  const handleRequestSort = (property: string) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
+
   return (
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
@@ -220,23 +238,23 @@ export function UserView() {
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
               <UserTableHead
-                order="asc"
-                orderBy="nombres" // Asegúrate de que esto coincida con una clave de UserProps
+                order={order}
+                orderBy={orderBy}
                 rowCount={users.length}
                 numSelected={0}
-                onSort={() => { }}
+                onSort={handleRequestSort} // Pasa el manejador aquí
                 onSelectAllRows={() => { }}
                 headLabel={[
-                  { id: 'number' as keyof UserProps, label: '#', align: 'center' }, // Puede ser un string, pero no colidir con UserProps
-                  { id: 'nombres' as keyof UserProps, label: 'Nombres' },
-                  { id: 'apellidos' as keyof UserProps, label: 'Apellidos' },
-                  { id: 'cc' as keyof UserProps, label: 'CC' },
-                  { id: 'cargo' as keyof UserProps, label: 'Cargo' },
-                  { id: 'correo' as keyof UserProps, label: 'Correo' },
-                  { id: 'agencia' as keyof UserProps, label: 'Agencia' },
-                  { id: 'rol' as keyof UserProps, label: 'Rol' },
-                  { id: 'status' as keyof UserProps, label: 'Estado' },
-                  { id: '' as keyof UserProps, label: '' }, // Asegúrate de que este id sea opcional o válido
+                  { id: 'number', label: '#', align: 'center' }, // Puede ser un string, pero no colidir con UserProps
+                  { id: 'nombres', label: 'Nombres' },
+                  { id: 'apellidos', label: 'Apellidos' },
+                  { id: 'cc', label: 'CC' },
+                  { id: 'cargo', label: 'Cargo' },
+                  { id: 'correo', label: 'Correo' },
+                  { id: 'agencia', label: 'Agencia' },
+                  { id: 'rol', label: 'Rol' },
+                  { id: 'status', label: 'Estado' },
+                  { id: ''},
                 ]}
               />
               <TableBody>

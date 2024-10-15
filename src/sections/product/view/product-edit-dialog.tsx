@@ -7,7 +7,7 @@ import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { Select, MenuItem, Checkbox, InputLabel, FormControl, FormControlLabel } from '@mui/material';
+import { Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
@@ -81,7 +81,7 @@ export function EditProductView({ product, onClose, onSave }: EditProductViewPro
       <Card sx={{ p: 3 }}>
         <TextField
           label="ID"
-          value={formData._id}
+          value={formData.item}
           disabled
           fullWidth
           margin="normal"
@@ -119,7 +119,6 @@ export function EditProductView({ product, onClose, onSave }: EditProductViewPro
             <MenuItem value="TAMIZAJE">Tamizaje</MenuItem>
           </Select>
         </FormControl>
-
         <FormControl fullWidth margin="normal" variant="outlined" required>
           <InputLabel>Tipo</InputLabel>
           <Select
@@ -146,15 +145,6 @@ export function EditProductView({ product, onClose, onSave }: EditProductViewPro
             <MenuItem value="BOL">Bolsa</MenuItem>
           </Select>
         </FormControl>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={formData.visible === 1}
-              onChange={(e) => setFormData({ ...formData, visible: e.target.checked ? 1 : 0 })}
-            />
-          }
-          label="Visible"
-        />
         <TextField
           label="Código"
           value={formData.codigo}

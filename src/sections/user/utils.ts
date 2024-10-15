@@ -61,11 +61,6 @@ type ApplyFilterProps = {
 };
 
 export function applyFilter({ inputData, comparator, filterName, selectedAgency, selectedStatus }: ApplyFilterProps) {
-  console.log('Input Data:', inputData); // Verifica el contenido
-  console.log('Filter Name:', filterName);
-  console.log('Selected Agency:', selectedAgency);
-  console.log('Selected Status:', selectedStatus);
-
   const stabilizedThis = inputData.map((el, index) => [el, index] as const);
 
   stabilizedThis.sort((a, b) => {
@@ -76,6 +71,7 @@ export function applyFilter({ inputData, comparator, filterName, selectedAgency,
 
   inputData = stabilizedThis.map((el) => el[0]);
 
+  // Filtrado por el término de búsqueda
   if (filterName) {
     inputData = inputData.filter(
       (user) =>
@@ -86,14 +82,12 @@ export function applyFilter({ inputData, comparator, filterName, selectedAgency,
   }
 
   if (selectedAgency) {
-    inputData = inputData.filter((user) => user.agencia.nombre === selectedAgency);
-  }
+    inputData = inputData.filter((user) => user.agencia && user.agencia.nombre === selectedAgency);
+  }  
 
+  // Filtrado por estado
   if (selectedStatus) {
     inputData = inputData.filter((user) => user.status === selectedStatus);
   }
-
-  console.log('Filtered Data:', inputData); // Verifica el resultado filtrado
-
   return inputData;
 }

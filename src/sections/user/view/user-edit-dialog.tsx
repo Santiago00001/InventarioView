@@ -38,7 +38,6 @@ export function EditUserView({ user, onClose, onSave, agencies }: EditUserViewPr
 
   const handleSave = async () => {
     try {
-      // Concatenar el dominio al correo antes de guardar
       const updatedUserData = {
         ...formData,
         correo: `${formData.correo}@coopserp.com`, // Concatenar el dominio aquí

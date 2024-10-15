@@ -7,17 +7,15 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 
 import { visuallyHidden } from './utils';
 
-import type { AgenciaProps } from './agency-table-row';
-
 // ----------------------------------------------------------------------
 
 type AgencyTableHeadProps = {
-  orderBy: keyof AgenciaProps; 
+  orderBy: string;
   rowCount: number;
   numSelected: number;
   order: 'asc' | 'desc';
-  onSort: (id: keyof AgenciaProps) => void; 
-  headLabel: Array<{ id: keyof AgenciaProps; label: string; align?: 'left' | 'right' | 'center'; width?: string; minWidth?: string }>;
+  onSort: (id: string) => void;
+  headLabel: Record<string, any>[];
   onSelectAllRows: (checked: boolean) => void;
 };
 

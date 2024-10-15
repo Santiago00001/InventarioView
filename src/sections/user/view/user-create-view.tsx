@@ -23,9 +23,9 @@ export function CreateUserView({ onClose, onSave, agencies }: CreateUserViewProp
     apellidos: '',
     cc: '',
     cargo: '',
-    correo: '', // Solo la parte antes de @coopserp.com
+    correo: '',
     agencia: {
-      _id: '', // Solo almacenamos el _id de la agencia
+      _id: '',
       item: 0,
       cod: 0,
       nombre: '',
@@ -158,7 +158,6 @@ export function CreateUserView({ onClose, onSave, agencies }: CreateUserViewProp
             ))}
           </Select>
         </FormControl>
-
         <FormControl fullWidth margin="normal" variant="outlined" required>
           <InputLabel>Rol</InputLabel>
           <Select

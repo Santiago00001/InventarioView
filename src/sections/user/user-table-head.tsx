@@ -12,12 +12,12 @@ import type { UserProps } from './user-table-row';
 // ----------------------------------------------------------------------
 
 type UserTableHeadProps = {
-  orderBy: keyof UserProps; 
+  orderBy: string;
   rowCount: number;
   numSelected: number;
   order: 'asc' | 'desc';
-  onSort: (id: keyof UserProps) => void; 
-  headLabel: Array<{ id: keyof UserProps; label: string; align?: 'left' | 'right' | 'center'; width?: string; minWidth?: string }>;
+  onSort: (id: string) => void;
+  headLabel: Record<string, any>[];
   onSelectAllRows: (checked: boolean) => void;
 };
 

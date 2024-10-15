@@ -1,5 +1,4 @@
 import type { SelectChangeEvent } from '@mui/material/Select';
-
 import { useState } from 'react';
 
 import Button from '@mui/material/Button';
@@ -22,9 +21,13 @@ type ProductTableToolbarProps = {
   onClearFilter: () => void;
   onAddProduct: () => void;
   selectedCategory: string;
-  onSelectedCategory: (event: SelectChangeEvent<string>) => void; // Corregido el nombre
+  onSelectedCategory: (event: SelectChangeEvent<string>) => void;
   selectedTipo: string;
   onselectedTipo: (event: SelectChangeEvent<string>) => void;
+  selectedPresentacion: string;
+  onselectedPresentacion: (event: SelectChangeEvent<string>) => void;
+  searchField: string;
+  onSearchFieldChange: (event: SelectChangeEvent<string>) => void; // Ajuste aquí: cambiar a SelectChangeEvent
 };
 
 export function ProductTableToolbar({
@@ -37,6 +40,10 @@ export function ProductTableToolbar({
   onSelectedCategory,
   selectedTipo,
   onselectedTipo,
+  selectedPresentacion,
+  onselectedPresentacion,
+  searchField,
+  onSearchFieldChange,
 }: ProductTableToolbarProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -73,18 +80,33 @@ export function ProductTableToolbar({
           {numSelected} seleccionados
         </Typography>
       ) : (
-        <OutlinedInput
-          fullWidth
-          value={filterName}
-          onChange={onFilterName}
-          placeholder="Buscar por nombre, item o código..."
-          startAdornment={
-            <InputAdornment position="start">
-              <Iconify width={20} icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
-            </InputAdornment>
-          }
-          sx={{ maxWidth: 320 }}
-        />
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          {/* Select para escoger el campo de búsqueda */}
+          <Select
+            value={searchField}
+            onChange={onSearchFieldChange} // Cambiar el campo de búsqueda
+            displayEmpty
+            sx={{ marginRight: 2, minWidth: 120 }}
+          >
+            <MenuItem value="nombre">Nombre</MenuItem>
+            <MenuItem value="item">Item</MenuItem>
+            <MenuItem value="codigo">Código</MenuItem>
+          </Select>
+          
+          {/* Input para escribir el valor de búsqueda */}
+          <OutlinedInput
+            fullWidth
+            value={filterName}
+            onChange={onFilterName}
+            placeholder={`Buscar por ${searchField}...`}
+            startAdornment={
+              <InputAdornment position="start">
+                <Iconify width={20} icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
+              </InputAdornment>
+            }
+            sx={{ maxWidth: 320 }}
+          />
+        </div>
       )}
 
       {numSelected > 0 ? (
@@ -130,6 +152,22 @@ export function ProductTableToolbar({
                 <MenuItem value="R">Repuestos de Mantenimiento</MenuItem>
                 <MenuItem value="S">Sistemas de insumos</MenuItem>
                 <MenuItem value="T">Tamizaje</MenuItem>
+              </Select>
+              <Select
+                value={selectedPresentacion}
+                onChange={onselectedPresentacion}
+                displayEmpty
+                sx={{ minWidth: 120, marginBottom: 2, fontSize: '0.875rem' }}
+              >
+                <MenuItem value="">
+                  <em>Presentacion</em>
+                </MenuItem>
+                <MenuItem value="UND">Unidad</MenuItem>
+                <MenuItem value="GAL">Galon</MenuItem>
+                <MenuItem value="PAQ">Paquete</MenuItem>
+                <MenuItem value="FCO">Frasco</MenuItem>
+                <MenuItem value="CAJ">Caja</MenuItem>
+                <MenuItem value="BOL">Bolsa</MenuItem>
               </Select>
               <Select
                 value={selectedTipo}

@@ -2,7 +2,7 @@
 import type { UserProps } from 'src/sections/user/user-table-row';
 
 import axios from 'axios';
-import { useMemo, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -45,10 +45,11 @@ export function AgencyView() {
   const [editMode, setEditMode] = useState<boolean>(false);
   const [selected, setSelected] = useState<string[]>([]);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [openConfirmDialog, setOpenConfirmDialog] = useState<boolean>(false);
   const [agencyToDelete, setAgencyToDelete] = useState<AgenciaProps | null>(null);
+  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
+  const [orderBy, setOrderBy] = useState<string>('nombre');
 
   const handleSaveAgency = async (agency: AgenciaProps): Promise<void> => {
     if (agency._id) {
@@ -135,13 +136,19 @@ export function AgencyView() {
     fetchUsersAndAgencies();
   }, []);
 
-  const dataFiltered: AgenciaProps[] = useMemo(() => applyFilter({
+   const dataFiltered: AgenciaProps[] = applyFilter({
     inputData: agencies,
-    comparator: getComparator('asc', 'nombre'),
+    comparator: getComparator(order, orderBy), // Asegúrate de usar el estado actual
     filterName,
     selectedUser,
     selectedStatus,
-  }), [agencies, filterName, selectedUser, selectedStatus]);
+  });
+
+  const handleRequestSort = (property: string) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
 
   const notFound = !dataFiltered.length && !!filterName;
 
@@ -182,7 +189,7 @@ export function AgencyView() {
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
         <Typography variant="h4" flexGrow={1}>
-          Agencias
+          Dependencias
         </Typography>
         <Button
           variant="contained"
@@ -190,7 +197,7 @@ export function AgencyView() {
           startIcon={<Iconify icon="mingcute:add-line" />}
           onClick={handleOpenAddAgencyModal} // Abrir modal para agregar nueva agencia
         >
-          Nueva Agencia
+          Nueva Dependencia
         </Button>
       </Box>
 
@@ -212,19 +219,19 @@ export function AgencyView() {
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
               <AgencyTableHead
-                order="asc"
-                orderBy="nombre" // Asegúrate de que esto coincida con una clave de UserProps
+                order={order}
+                orderBy={orderBy}
                 rowCount={users.length}
                 numSelected={0}
-                onSort={() => { }}
+                onSort={handleRequestSort} // Pasa el manejador aquí
                 onSelectAllRows={() => { }}
                 headLabel={[
-                  { id: 'number' as keyof AgenciaProps, label: '#', align: 'center' }, // Puede ser un string, pero no colidir con UserProps
-                  { id: 'nombres' as keyof AgenciaProps, label: 'Nombre' },
-                  { id: 'cod' as keyof AgenciaProps, label: 'Codigo' },
-                  { id: 'coordinador' as keyof AgenciaProps, label: 'Coordinador' },
-                  { id: 'director' as keyof AgenciaProps, label: 'Director' },
-                  { id: '' as keyof AgenciaProps, label: '' }, // Asegúrate de que este id sea opcional o válido
+                  { id: 'number', label: '#', align: 'center' }, // Puede ser un string, pero no colidir con UserProps
+                  { id: 'nombre', label: 'Nombre' },
+                  { id: 'cod', label: 'Codigo' },
+                  { id: 'coordinador', label: 'Coordinador' },
+                  { id: 'director', label: 'Director' },
+                  { id: ''},
                 ]}
               />
               <TableBody>

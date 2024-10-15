@@ -7,6 +7,8 @@ type ApplyFilterProps = {
   filterName: string;
   selectedCategory: string;
   selectedTipo: string; // Agregar el filtro para el estado
+  selectedPresentacion: string;
+  searchField: string;
   comparator: (a: any, b: any) => number;
 };
 
@@ -35,6 +37,8 @@ export function applyFilter({
   filterName,
   selectedCategory,
   selectedTipo,
+  selectedPresentacion,
+  searchField, // Nuevo parámetro
 }: ApplyFilterProps) {
   const stabilizedThis = inputData.map((el, index) => [el, index] as const);
 
@@ -46,11 +50,20 @@ export function applyFilter({
 
   inputData = stabilizedThis.map((el) => el[0]);
 
+  // Filtrado por el término de búsqueda basado en el campo seleccionado
   if (filterName) {
-    inputData = inputData.filter(
-      (product) =>
-        product.nombre.toLowerCase().includes(filterName.toLowerCase())
-    );
+    inputData = inputData.filter((product) => {
+      switch (searchField) {
+        case "nombre":
+          return product.nombre.toLowerCase().includes(filterName.toLowerCase());
+        case "item":
+          return product.item.toString() === filterName; // Comparación exacta
+        case "codigo":
+          return product.codigo.toString() === filterName; // Comparación exacta
+        default:
+          return false; // Si no se selecciona un campo válido, no filtra nada
+      }
+    });
   }
 
   if (selectedCategory) {
@@ -59,6 +72,10 @@ export function applyFilter({
 
   if (selectedTipo) {
     inputData = inputData.filter((product) => product.tipo === selectedTipo);
+  }
+
+  if (selectedPresentacion) {
+    inputData = inputData.filter((product) => product.presentacion === selectedPresentacion);
   }
 
   return inputData;

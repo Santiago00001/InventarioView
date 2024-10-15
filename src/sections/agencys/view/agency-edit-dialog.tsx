@@ -81,14 +81,21 @@ export function EditAgencyView({ agency, onClose, onSave, users }: EditAgencyVie
           fullWidth
           margin="normal"
         />
-        <TextField
-          label="Coordinador"
-          value={formData.coordinador}
-          onChange={(e) => setFormData({ ...formData, coordinador: e.target.value })}
-          fullWidth
-          margin="normal"
-        />
-        
+        <FormControl fullWidth margin="normal" variant="outlined" required>
+          <InputLabel>Coordinador</InputLabel>
+          <Select
+            label="Coordinador"
+            value={formData.coordinador}
+            onChange={(e) => setFormData({ ...formData, coordinador: e.target.value })}
+          >
+            <MenuItem value="C5">Coordinador 5</MenuItem>
+            <MenuItem value="C4">Coordinador 4</MenuItem>
+            <MenuItem value="C3">Coordinador 3</MenuItem>
+            <MenuItem value="C2">Coordinador 2</MenuItem>
+            <MenuItem value="C1">Coordinador 1</MenuItem>
+            <MenuItem value="NA">No Aplica</MenuItem>
+          </Select>
+        </FormControl>
         {/* Campo para seleccionar el Director */}
         <FormControl fullWidth margin="normal" required>
           <InputLabel>Director</InputLabel>

@@ -31,11 +31,9 @@ export type ProductTableRowProps = {
   onSelectRow: () => void; // Función para seleccionar la fila
   onEditProduct: (product: ProductProps) => void; // Función para editar el producto
   onDeleteProduct: (id: string) => Promise<void>; // Función para eliminar el producto
-  index: number; // Define el tipo de index
-
 };
 
-export function ProductTableRow({ row, selected, index, onSelectRow, onEditProduct, onDeleteProduct }: ProductTableRowProps) {
+export function ProductTableRow({ row, selected, onSelectRow, onEditProduct, onDeleteProduct }: ProductTableRowProps) {
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
@@ -62,7 +60,7 @@ export function ProductTableRow({ row, selected, index, onSelectRow, onEditProdu
         <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
         </TableCell>
-        <TableCell align="center">{index}</TableCell> {/* Celda para el número de la fila */}
+        <TableCell align="center">{row.item}</TableCell> {/* Celda para el número de la fila */}
         <TableCell component="th" scope="row">
           <Box gap={2} display="flex" alignItems="center">
             <Avatar alt={row.nombre} />

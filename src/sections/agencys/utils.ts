@@ -61,11 +61,6 @@ type ApplyFilterProps = {
 };
 
 export function applyFilter({ inputData, comparator, filterName, selectedUser, selectedStatus }: ApplyFilterProps) {
-  console.log('Input Data:', inputData); // Verifica el contenido
-  console.log('Filter Name:', filterName);
-  console.log('Selected Agency:', selectedUser);
-  console.log('Selected Status:', selectedStatus);
-
   const stabilizedThis = inputData.map((el, index) => [el, index] as const);
 
   stabilizedThis.sort((a, b) => {
