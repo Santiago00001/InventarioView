@@ -119,7 +119,7 @@ export function EditProviderView({ provider, onClose, onSave }: EditProviderView
           margin="normal"
         />
         <TextField
-          label="Fecha de Ingreso"
+          label="Fecha de Fundacion"
           type="date"
           InputLabelProps={{
             shrink: true,
@@ -158,7 +158,7 @@ export function EditProviderView({ provider, onClose, onSave }: EditProviderView
         <FormControlLabel
           control={
             <Checkbox
-              checked={formData.ver_ins === true}
+              checked={formData.ver_ins}
               onChange={(e) => setFormData({ ...formData, ver_ins: e.target.checked })}
             />
           }
@@ -189,13 +189,12 @@ export function EditProviderView({ provider, onClose, onSave }: EditProviderView
         <FormControlLabel
           control={
             <Checkbox
-              checked={formData.ver_dat === true}
+              checked={formData.ver_dat}
               onChange={(e) => setFormData({ ...formData, ver_dat: e.target.checked })}
             />
           }
           label="Verificado DAT"
         />
-
         <Box display="flex" justifyContent="center" mt={2}>
           <Button
             variant="contained"

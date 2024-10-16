@@ -69,6 +69,7 @@ export function CreateAgencyView({ onClose, onSave, users }: CreateAgencyViewPro
             value={formData.coordinador}
             onChange={(e) => setFormData({ ...formData, coordinador: e.target.value })}
           >
+            <MenuItem value="C9">Coordinador 9</MenuItem>
             <MenuItem value="C5">Coordinador 5</MenuItem>
             <MenuItem value="C4">Coordinador 4</MenuItem>
             <MenuItem value="C3">Coordinador 3</MenuItem>

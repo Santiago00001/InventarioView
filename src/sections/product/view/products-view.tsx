@@ -17,7 +17,6 @@ import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination'; // Asegúrate de que está importado
 
-import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 
 import { useCreateProductDialog } from 'src/hooks/use-product-create';
@@ -53,8 +52,7 @@ export function ProductsView() {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [searchField, setSearchField] = useState("nombre");
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
-  const [orderBy, setOrderBy] = useState<string>('nombre');
-
+  const [orderBy, setOrderBy] = useState<string>('item');
 
   const handleSelectRow = (id: number) => {
     setSelectedRows((prev) =>
@@ -206,18 +204,17 @@ export function ProductsView() {
                 onSort={handleRequestSort} // Pasa el manejador aquí
                 onSelectAllRows={() => { }}
                 headLabel={[
-                  { id: 'item', label: '#', align: 'center' },
+                  { id: 'item', label: 'Item', align: 'center' },
                   { id: 'nombre', label: 'Nombre' },
                   { id: 'cta_cont', label: 'CTA' },
                   { id: 'codigo', label: 'COD' },
                   { id: 'categoria', label: 'Categoría' },
-                  { id: 'grupo', label: 'Grupo' },
+                  { id: 'grupo_desc', label: 'Grupo' },
                   { id: 'tipo', label: 'Tipo' },
                   { id: 'presentacion', label: 'Presentación' },
                   { id: '' },
                 ]}
               />
-
               <TableBody>
                 {loading ? (
                   <TableRow>
@@ -268,8 +265,8 @@ export function ProductsView() {
       </Card>
       {AddProductDialog}
 
+      {/* Modal para editar producto */}
       <Dialog open={editMode} onClose={handleCloseEditDialog}>
-        <DialogTitle>Editar Producto</DialogTitle>
         <DialogContent>
           {selectedProduct && (
             <EditProductView

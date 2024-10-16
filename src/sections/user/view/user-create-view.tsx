@@ -153,7 +153,7 @@ export function CreateUserView({ onClose, onSave, agencies }: CreateUserViewProp
           >
             {agencies.map(agency => (
               <MenuItem key={agency._id} value={agency._id}>
-                {agency.nombre}
+                {agency.cod} {agency.nombre}
               </MenuItem>
             ))}
           </Select>

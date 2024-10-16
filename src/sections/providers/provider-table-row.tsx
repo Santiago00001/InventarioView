@@ -14,6 +14,7 @@ import { Iconify } from 'src/components/iconify';
 
 export type ProviderProps = {
   _id: string;
+  item: number,
   nit: string;
   razon_social: string;
   direccion: string;
@@ -26,10 +27,10 @@ export type ProviderProps = {
   fecha_inag: Date;
   cod_ins: string;
   cod_ins_fecha: Date;
-  ver_ins?: boolean;
+  ver_ins: boolean;
   cod_dat: string;
   cod_dat_fecha: Date;
-  ver_dat?: boolean;
+  ver_dat: boolean;
   visible: number;
 };
 
@@ -39,10 +40,9 @@ export type ProviderTableRowProps = {
   onSelectRow: () => void; // Función para seleccionar la fila
   onEditProduct: (provider: ProviderProps) => void; // Función para editar el producto
   onDeleteProduct: (id: string) => Promise<void>; // Función para eliminar el producto
-  index: number; // Define el tipo de index
 };
 
-export function ProductTableRow({ row, selected, index, onSelectRow, onEditProduct, onDeleteProduct }: ProviderTableRowProps) {
+export function ProviderTableRow({ row, selected, onSelectRow, onEditProduct, onDeleteProduct }: ProviderTableRowProps) {
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
@@ -70,7 +70,7 @@ export function ProductTableRow({ row, selected, index, onSelectRow, onEditProdu
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
         </TableCell>
 
-        <TableCell align="center">{index}</TableCell> {/* Celda para el número de la fila */}
+        <TableCell align="center">{row.item}</TableCell> {/* Celda para el número de la fila */}
 
         <TableCell>{row.nit}</TableCell>
 
@@ -81,16 +81,17 @@ export function ProductTableRow({ row, selected, index, onSelectRow, onEditProdu
           </Box>
         </TableCell>
 
-        <TableCell>{row.direccion}</TableCell>
+        <TableCell sx={{ minWidth: 180 }}>{row.direccion}</TableCell>
         <TableCell>{row.ciudad}</TableCell>
         <TableCell>{row.tel}</TableCell>
         <TableCell>{row.cel}</TableCell>
         <TableCell>{row.correo}</TableCell>
-        <TableCell>{row.contacto}</TableCell>
-        <TableCell>{row.act_eco}</TableCell>
-        <TableCell>{row.fecha_inag.toString()}</TableCell> {/* Convertir Date a string para mostrar */}
-        <TableCell>{row.cod_ins}</TableCell>
-        <TableCell>{row.cod_ins_fecha.toString()}</TableCell>
+        <TableCell sx={{ minWidth: 180 }}>{row.contacto}</TableCell>
+        <TableCell sx={{ minWidth: 180 }}>{row.act_eco}</TableCell>
+        <TableCell sx={{ minWidth: 120 }}>{new Date(row.fecha_inag).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}</TableCell>
+        <TableCell sx={{ minWidth: 120 }}>{row.cod_ins}</TableCell>
+        <TableCell sx={{ minWidth: 120 }}>{new Date(row.cod_ins_fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}</TableCell>
+
         <TableCell align="center">
           {row.ver_ins ? (
             <Iconify width={22} icon="solar:check-circle-bold" sx={{ color: 'success.main' }} />
@@ -98,8 +99,10 @@ export function ProductTableRow({ row, selected, index, onSelectRow, onEditProdu
             <Iconify width={22} icon="mdi:close-circle" sx={{ color: 'error.main' }} />
           )}
         </TableCell>
-        <TableCell>{row.cod_dat}</TableCell>
-        <TableCell>{row.cod_dat_fecha.toString()}</TableCell>
+
+        <TableCell sx={{ minWidth: 120 }}>{row.cod_dat}</TableCell>
+        <TableCell sx={{ minWidth: 120 }}>{new Date(row.cod_dat_fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}</TableCell>
+        
         <TableCell align="center">
           {row.ver_dat ? (
             <Iconify width={22} icon="solar:check-circle-bold" sx={{ color: 'success.main' }} />
@@ -107,6 +110,7 @@ export function ProductTableRow({ row, selected, index, onSelectRow, onEditProdu
             <Iconify width={22} icon="mdi:close-circle" sx={{ color: 'error.main' }} />
           )}
         </TableCell>
+
         <TableCell align="right">
           <IconButton onClick={handleOpenPopover}>
             <Iconify icon="eva:more-vertical-fill" />

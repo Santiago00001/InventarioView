@@ -31,6 +31,7 @@ import { TableNoData } from '../table-no-data';
 import { UserTableRow } from '../user-table-row';
 import { EditUserView } from './user-edit-dialog';
 import { UserTableHead } from '../user-table-head';
+import { EditStatusView } from './status-edit-dialog';
 import { applyFilter, getComparator } from '../utils';
 import { UserTableToolbar } from '../user-table-toolbar';
 
@@ -45,11 +46,12 @@ export function UserView() {
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedUser, setSelectedUser] = useState<UserProps | null>(null);
   const [editMode, setEditMode] = useState<boolean>(false);
+  const [editModeStatus, setEditModeStatus] = useState<boolean>(false);
   const [selected, setSelected] = useState<string[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
-  const [orderBy, setOrderBy] = useState<string>('nombres');
+  const [orderBy, setOrderBy] = useState<string>('item');
 
   const [openConfirmDialog, setOpenConfirmDialog] = useState<boolean>(false); // Controla la apertura del modal
   const [userToDelete, setUserToDelete] = useState<UserProps | null>(null); // Almacena el usuario que se va a eliminar
@@ -174,6 +176,11 @@ export function UserView() {
     setEditMode(true);
   };
 
+  const handleEditUserStatus = (user: UserProps) => {
+    setSelectedUser(user);
+    setEditModeStatus(true);
+  };  
+
   const handleDeleteUser = async () => {
     if (userToDelete) {
       try {
@@ -245,7 +252,7 @@ export function UserView() {
                 onSort={handleRequestSort} // Pasa el manejador aquí
                 onSelectAllRows={() => { }}
                 headLabel={[
-                  { id: 'number', label: '#', align: 'center' }, // Puede ser un string, pero no colidir con UserProps
+                  { id: 'item', label: 'Item', align: 'center' }, // Puede ser un string, pero no colidir con UserProps
                   { id: 'nombres', label: 'Nombres' },
                   { id: 'apellidos', label: 'Apellidos' },
                   { id: 'cc', label: 'CC' },
@@ -272,8 +279,8 @@ export function UserView() {
                         selected={table.selected.includes(row._id.toString())}
                         onSelectRow={() => table.onSelectRow(row._id.toString())}
                         onEditUser={handleEditUser}
+                        onEditStatus={() => handleEditUserStatus(row)} // Si quieres solo editar el estado
                         onDeleteUser={async () => handleOpenConfirmDialog(row)} // Abrir modal al eliminar
-                        index={table.page * table.rowsPerPage + index + 1} // Calcula el número según la página actual
                       />
                     ))
                 )}
@@ -317,7 +324,6 @@ export function UserView() {
 
       {/* Modal para editar usuario */}
       <Dialog open={editMode} onClose={() => setEditMode(false)}>
-        <DialogTitle>Editar Usuario</DialogTitle>
         <DialogContent>
           {selectedUser && (
             <EditUserView
@@ -325,6 +331,19 @@ export function UserView() {
               onClose={() => setEditMode(false)}
               onSave={handleSaveUser}
               agencies={agencies}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal para editar estado del usuario */}
+      <Dialog open={editModeStatus} onClose={() => setEditModeStatus(false)}>
+        <DialogContent>
+          {selectedUser && (
+            <EditStatusView
+              user={selectedUser}
+              onClose={() => setEditModeStatus(false)}
+              onSave={handleSaveUser}
             />
           )}
         </DialogContent>

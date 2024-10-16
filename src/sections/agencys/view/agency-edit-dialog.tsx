@@ -88,6 +88,7 @@ export function EditAgencyView({ agency, onClose, onSave, users }: EditAgencyVie
             value={formData.coordinador}
             onChange={(e) => setFormData({ ...formData, coordinador: e.target.value })}
           >
+            <MenuItem value="C9">Coordinador 9</MenuItem>
             <MenuItem value="C5">Coordinador 5</MenuItem>
             <MenuItem value="C4">Coordinador 4</MenuItem>
             <MenuItem value="C3">Coordinador 3</MenuItem>
@@ -98,9 +99,9 @@ export function EditAgencyView({ agency, onClose, onSave, users }: EditAgencyVie
         </FormControl>
         {/* Campo para seleccionar el Director */}
         <FormControl fullWidth margin="normal" required>
-          <InputLabel>Director</InputLabel>
+          <InputLabel>Funcionario</InputLabel>
           <Select
-            label="Director"
+            label="Funcionario"
             value={formData.director}
             onChange={handleDirectorChange}
           >

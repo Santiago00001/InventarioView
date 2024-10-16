@@ -36,11 +36,10 @@ export type AgencyTableRowProps = {
   onSelectRow: () => void;
   onEditAgency: (agency: AgenciaProps) => void;
   onDeleteAgency: (id: string) => Promise<void>;
-  index: number;
   users: UserProps[];
 };
 
-export function AgencyTableRow({ row, selected, index, users, onSelectRow, onEditAgency, onDeleteAgency }: AgencyTableRowProps) {
+export function AgencyTableRow({ row, selected, users, onSelectRow, onEditAgency, onDeleteAgency }: AgencyTableRowProps) {
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
@@ -69,7 +68,7 @@ export function AgencyTableRow({ row, selected, index, users, onSelectRow, onEdi
         <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
         </TableCell>
-        <TableCell align="center">{index}</TableCell> {/* Celda para el número de la fila */}
+        <TableCell align="center">{row.item}</TableCell> {/* Celda para el número de la fila */}
         <TableCell component="th" scope="row">
           <Box gap={2} display="flex" alignItems="center">
             <Avatar alt={row.nombre} sx={{ bgcolor: 'primary.main' }}>

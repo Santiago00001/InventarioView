@@ -49,7 +49,7 @@ export function AgencyView() {
   const [openConfirmDialog, setOpenConfirmDialog] = useState<boolean>(false);
   const [agencyToDelete, setAgencyToDelete] = useState<AgenciaProps | null>(null);
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
-  const [orderBy, setOrderBy] = useState<string>('nombre');
+  const [orderBy, setOrderBy] = useState<string>('item');
 
   const handleSaveAgency = async (agency: AgenciaProps): Promise<void> => {
     if (agency._id) {
@@ -226,7 +226,7 @@ export function AgencyView() {
                 onSort={handleRequestSort} // Pasa el manejador aquí
                 onSelectAllRows={() => { }}
                 headLabel={[
-                  { id: 'number', label: '#', align: 'center' }, // Puede ser un string, pero no colidir con UserProps
+                  { id: 'item', label: 'Item', align: 'center' }, // Puede ser un string, pero no colidir con UserProps
                   { id: 'nombre', label: 'Nombre' },
                   { id: 'cod', label: 'Codigo' },
                   { id: 'coordinador', label: 'Coordinador' },
@@ -250,7 +250,6 @@ export function AgencyView() {
                         onSelectRow={() => handleSelectRow(row._id)}
                         onEditAgency={handleEditAgency}
                         onDeleteAgency={async () => handleOpenConfirmDialog(row)}
-                        index={table.page * table.rowsPerPage + index + 1}
                         users={users}
                       />
                     ))
@@ -293,9 +292,8 @@ export function AgencyView() {
         </DialogActions>
       </Dialog>
 
-      {/* Modal para editar usuario */}
+      {/* Modal para editar la agencia */}
       <Dialog open={editMode} onClose={() => setEditMode(false)}>
-        <DialogTitle>Editar Usuario</DialogTitle>
         <DialogContent>
           {selectedAgency && (
             <EditAgencyView

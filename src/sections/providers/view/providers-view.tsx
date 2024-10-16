@@ -3,7 +3,7 @@ import type { SelectChangeEvent } from '@mui/material';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import axios from 'axios';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -16,7 +16,6 @@ import TableCell from '@mui/material/TableCell';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination'; // Asegúrate de que está importado
-import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 
 import { useCreateProviderDialog } from 'src/hooks/use-provider-dialog';
@@ -29,7 +28,7 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { applyFilter, getComparator } from 'src/sections/providers/utils';
 
 import { TableNoData } from '../providers-no-data';
-import { ProductTableRow } from '../provider-table-row'; // Asegúrate de que sea el componente correcto
+import { ProviderTableRow } from '../provider-table-row'; // Asegúrate de que sea el componente correcto
 
 import { EditProviderView } from './provider-edit-dialog';
 import { ProviderTableHead } from '../provider-table-head';
@@ -49,7 +48,7 @@ export function ProviderView() {
   const [selectedTipo, setSelectedTipo] = useState<string>('');
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
-  const [orderBy, setOrderBy] = useState<string>('razon_social');
+  const [orderBy, setOrderBy] = useState<string>('item');
 
   const handleSelectRow = (id: string) => {
     setSelectedRows((prev) =>
@@ -190,7 +189,7 @@ export function ProviderView() {
                 onSort={handleRequestSort} // Pasa el manejador aquí
                 onSelectAllRows={() => { }}
                 headLabel={[
-                  { id: 'number', label: '#', align: 'center' }, // Nueva columna para la numeración
+                  { id: 'item', label: 'Item', align: 'center' }, // Nueva columna para la numeración
                   { id: 'nit', label: 'Nit' },
                   { id: 'razon_social', label: 'Razón Social' },
                   { id: 'direccion', label: 'Direccion' },
@@ -200,14 +199,14 @@ export function ProviderView() {
                   { id: 'correo', label: 'Correo' },
                   { id: 'contacto', label: 'Contacto' },
                   { id: 'act_eco', label: 'Actividad Económica' },
-                  { id: 'fecha_inag', label: 'Fecha Inaguracion' },
+                  { id: 'fecha_inag', label: 'Fecha Fundacion' },
                   { id: 'cod_ins', label: 'Codigo INS' },
                   { id: 'cod_ins_fecha', label: 'Fecha INS' },
                   { id: 'ver_ins', label: 'Verificacion INS' },
                   { id: 'cod_dat', label: 'Codigo DAT' },
                   { id: 'cod_dat_fecha', label: 'Fecha DAT' },
                   { id: 'ver_dat', label: 'Verificacion DAT' },
-                  { id: 'acciones', label: 'Acciones' },
+                  { id: ''},
                 ]}
               />
               <TableBody>
@@ -219,14 +218,13 @@ export function ProviderView() {
                   dataFiltered
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, index) => (
-                      <ProductTableRow
+                      <ProviderTableRow
                         key={row._id}
                         row={row}
                         selected={selectedRows.includes(row._id)} // Indica si la fila está seleccionada
                         onSelectRow={() => handleSelectRow(row._id)} // Manejo de selección de fila
                         onEditProduct={handleEditProduct}
                         onDeleteProduct={handleDeleteProduct}
-                        index={page * rowsPerPage + index + 1} // Calcula el número según la página actual
                       />
                     ))
                 )}
@@ -261,8 +259,8 @@ export function ProviderView() {
       </Card>
       {AddProductDialog}
 
+      {/* Modal para editar el proveedor */}
       <Dialog open={editMode} onClose={handleCloseEditDialog}>
-        <DialogTitle>Editar Proveedor</DialogTitle>
         <DialogContent>
           {selectedProduct && (
             <EditProviderView
@@ -275,73 +273,4 @@ export function ProviderView() {
       </Dialog>
     </DashboardContent>
   );
-}
-
-// ----------------------------------------------------------------------
-
-export function useTable() {
-  const [page, setPage] = useState(0);
-  const [orderBy, setOrderBy] = useState('nombres');
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [selected, setSelected] = useState<string[]>([]);
-  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
-
-  const onSort = useCallback(
-    (id: string) => {
-      const isAsc = orderBy === id && order === 'asc';
-      setOrder(isAsc ? 'desc' : 'asc');
-      setOrderBy(id);
-    },
-    [order, orderBy]
-  );
-
-  const onSelectAllRows = useCallback((checked: boolean, newSelecteds: string[]) => {
-    if (checked) {
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  }, []);
-
-  const onSelectRow = useCallback(
-    (inputValue: string) => {
-      const newSelected = selected.includes(inputValue)
-        ? selected.filter((value) => value !== inputValue)
-        : [...selected, inputValue];
-
-      setSelected(newSelected);
-    },
-    [selected]
-  );
-
-  const onResetPage = useCallback(() => {
-    setPage(0);
-  }, []);
-
-  const onChangePage = useCallback((event: unknown, newPage: number) => {
-    setPage(newPage);
-  }, []);
-
-  const onChangeRowsPerPage = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const newRowsPerPage = parseInt(event.target.value, 10);
-      setRowsPerPage(newRowsPerPage);
-      setPage(0);
-    },
-    []
-  );
-
-  return {
-    page,
-    order,
-    onSort,
-    orderBy,
-    selected,
-    rowsPerPage,
-    onSelectRow,
-    onResetPage,
-    onChangePage,
-    onSelectAllRows,
-    onChangeRowsPerPage,
-  };
 }

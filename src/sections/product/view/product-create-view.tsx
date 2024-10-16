@@ -87,6 +87,7 @@ export function CreateProductView({ onClose, onSave }: CreateUserViewProps) {
             <MenuItem value="REPUESTOS DE MTO">Repuestos de Mantenimiento</MenuItem>
             <MenuItem value="SISTEMAS INSUMOS">Sistemas insumos</MenuItem>
             <MenuItem value="TAMIZAJE">Tamizaje</MenuItem>
+            <MenuItem value="OTRO">Otro</MenuItem>
           </Select>
         </FormControl>
         <FormControl fullWidth margin="normal" variant="outlined" required>

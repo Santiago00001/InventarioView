@@ -59,7 +59,7 @@ export function applyFilter({
         case "item":
           return product.item.toString() === filterName; // Comparación exacta
         case "codigo":
-          return product.codigo.toString() === filterName; // Comparación exacta
+          return product.codigo.toString().includes(filterName.toLowerCase());
         default:
           return false; // Si no se selecciona un campo válido, no filtra nada
       }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Box, Card, Button, TextField, Typography } from '@mui/material';
+import { Box, Card, Button, Checkbox, TextField, Typography, FormControlLabel } from '@mui/material';
 
 import { Iconify } from 'src/components/iconify';
 
@@ -14,6 +14,7 @@ interface CreateProviderViewProps {
 export function CreateProviderView({ onClose, onSave }: CreateProviderViewProps) {
   const [formData, setFormData] = useState<ProviderProps>({
     _id: '',
+    item: 0,
     nit: '',
     razon_social: '',
     direccion: '',
@@ -125,7 +126,7 @@ export function CreateProviderView({ onClose, onSave }: CreateProviderViewProps)
           required
         />
         <TextField
-          label="Fecha de Ingreso"
+          label="Fecha de Fundacion"
           type="date"
           InputLabelProps={{
             shrink: true,
@@ -138,6 +139,68 @@ export function CreateProviderView({ onClose, onSave }: CreateProviderViewProps)
           fullWidth
           margin="normal"
           required
+        />
+        <TextField
+          label="Código INS"
+          value={formData.cod_ins}
+          onChange={(e) => setFormData({ ...formData, cod_ins: e.target.value })}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Fecha de Inscripción"
+          type="date"
+          InputLabelProps={{
+            shrink: true,
+          }}
+          value={formData.cod_ins_fecha.toISOString().split('T')[0]} // Convierte la fecha a formato 'YYYY-MM-DD'
+          onChange={(e) => {
+            const selectedDate = new Date(e.target.value); // Convierte el valor de string a objeto Date
+            setFormData({ ...formData, cod_ins_fecha: selectedDate }); // Actualiza el estado
+          }}
+          fullWidth
+          margin="normal"
+          required
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={formData.ver_ins === true}
+              onChange={(e) => setFormData({ ...formData, ver_ins: e.target.checked })}
+            />
+          }
+          label="Verificado INS"
+        />
+        <TextField
+          label="Código DAT"
+          value={formData.cod_dat}
+          onChange={(e) => setFormData({ ...formData, cod_dat: e.target.value })}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Fecha de Inscripción DAT"
+          type="date"
+          InputLabelProps={{
+            shrink: true,
+          }}
+          value={formData.cod_dat_fecha.toISOString().split('T')[0]} // Convierte la fecha a formato 'YYYY-MM-DD'
+          onChange={(e) => {
+            const selectedDate = new Date(e.target.value); // Convierte el valor de string a objeto Date
+            setFormData({ ...formData, cod_dat_fecha: selectedDate }); // Actualiza el estado
+          }}
+          fullWidth
+          margin="normal"
+          required
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={formData.ver_dat === true}
+              onChange={(e) => setFormData({ ...formData, ver_dat: e.target.checked })}
+            />
+          }
+          label="Verificado DAT"
         />
         <Button
           variant="contained"

@@ -51,11 +51,11 @@ export type UserTableRowProps = {
   selected: boolean;
   onSelectRow: () => void;
   onEditUser: (user: UserProps) => void;
+  onEditStatus: (user: UserProps) => void;
   onDeleteUser: (id: string) => Promise<void>;
-  index: number; // Define el tipo de index
 };
 
-export function UserTableRow({ row, selected, index, onSelectRow, onEditUser, onDeleteUser }: UserTableRowProps) {
+export function UserTableRow({ row, selected, onSelectRow, onEditUser, onEditStatus, onDeleteUser }: UserTableRowProps) {
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
@@ -71,6 +71,11 @@ export function UserTableRow({ row, selected, index, onSelectRow, onEditUser, on
     handleClosePopover();
   };
 
+  const handleEditStatus = () => {
+    onEditStatus(row); // Llamar a la función para editar estado
+    handleClosePopover();
+  };
+
   const handleDelete = () => {
     onDeleteUser(row._id);
     handleClosePopover();
@@ -82,7 +87,7 @@ export function UserTableRow({ row, selected, index, onSelectRow, onEditUser, on
         <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
         </TableCell>
-        <TableCell align="center">{index}</TableCell> {/* Celda para el número de la fila */}
+        <TableCell align="center">{row.item}</TableCell> {/* Celda para el número de la fila */}
         <TableCell component="th" scope="row">
           <Box gap={2} display="flex" alignItems="center">
             <Avatar alt={`${row.nombres} ${row.apellidos}`} sx={{ bgcolor: 'primary.main' }}>
@@ -132,7 +137,7 @@ export function UserTableRow({ row, selected, index, onSelectRow, onEditUser, on
           sx={{
             p: 0.5,
             gap: 0.5,
-            width: 140,
+            width: 160,
             display: 'flex',
             flexDirection: 'column',
             [`& .${menuItemClasses.root}`]: {
@@ -145,7 +150,12 @@ export function UserTableRow({ row, selected, index, onSelectRow, onEditUser, on
         >
           <MenuItem onClick={handleEdit}>
             <Iconify icon="solar:pen-bold" />
-            Editar
+            Editar Todo
+          </MenuItem>
+
+          <MenuItem onClick={handleEditStatus}>
+            <Iconify icon="solar:pen-bold" />
+            Editar Estado
           </MenuItem>
 
           <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
