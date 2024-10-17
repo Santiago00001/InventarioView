@@ -1,4 +1,5 @@
 // UserView.tsx
+import type { SelectChangeEvent } from '@mui/material';
 import type { AgenciaProps } from 'src/sections/agencys/agency-table-row';
 
 import axios from 'axios';
@@ -39,8 +40,9 @@ import type { UserProps } from '../user-table-row';
 
 export function UserView() {
   const [filterName, setFilterName] = useState<string>('');
-  const [selectedAgency, setSelectedAgency] = useState<string>('');
+  const [selectedRol, setSelectedRol] = useState<string>('');
   const [selectedStatus, setSelectedStatus] = useState<string>('');
+  const [selectedCargo, setSelectedCargo] = useState<string>('');
   const [users, setUsers] = useState<UserProps[]>([]);
   const [agencies, setAgencies] = useState<AgenciaProps[]>([]); // Estado para agencias
   const [loading, setLoading] = useState<boolean>(true);
@@ -52,6 +54,8 @@ export function UserView() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [orderBy, setOrderBy] = useState<string>('item');
+  const [searchField, setSearchField] = useState("nombres");
+
 
   const [openConfirmDialog, setOpenConfirmDialog] = useState<boolean>(false); // Controla la apertura del modal
   const [userToDelete, setUserToDelete] = useState<UserProps | null>(null); // Almacena el usuario que se va a eliminar
@@ -159,16 +163,19 @@ export function UserView() {
     inputData: users,
     comparator: getComparator(order, orderBy), // Asegúrate de usar el estado actual
     filterName,
-    selectedAgency,
+    selectedRol,
     selectedStatus,
+    selectedCargo,
+    searchField,
   });
 
   const notFound = !dataFiltered.length && !!filterName;
 
   const handleClearFilter = () => {
     setFilterName('');
-    setSelectedAgency('');
+    setSelectedRol('');
     setSelectedStatus('');
+    setSearchField('nombres');
   };
 
   const handleEditUser = (user: UserProps) => {
@@ -211,6 +218,10 @@ export function UserView() {
     setOrderBy(property);
   };
 
+  const handleSearchFieldChange = (event: SelectChangeEvent<string>) => {
+    setSearchField(event.target.value); // Asegúrate de manejar correctamente el evento
+  };
+
   return (
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
@@ -236,10 +247,14 @@ export function UserView() {
           }}
           onClearFilter={handleClearFilter}
           onAddUser={handleOpenAddUserModal} // Vinculado a la función de abrir el modal
-          selectedAgency={selectedAgency}
-          onSelectAgency={(event) => setSelectedAgency(event.target.value as string)}
+          selectedRol={selectedRol}
+          onSelectRol={(event) => setSelectedRol(event.target.value as string)}
           selectedStatus={selectedStatus}
           onSelectStatus={(event) => setSelectedStatus(event.target.value as string)}
+          selectedCargo={selectedCargo}
+          onSelectCargo={(event) => setSelectedCargo(event.target.value as string)}
+          searchField={searchField}
+          onSearchFieldChange={handleSearchFieldChange}
         />
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
@@ -272,7 +287,7 @@ export function UserView() {
                 ) : (
                   dataFiltered
                     .slice(table.page * table.rowsPerPage, table.page * table.rowsPerPage + table.rowsPerPage)
-                    .map((row, index) => (
+                    .map((row) => (
                       <UserTableRow
                         key={row._id}
                         row={row}

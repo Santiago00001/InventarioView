@@ -21,10 +21,14 @@ type UserTableToolbarProps = {
   onFilterName: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onClearFilter: () => void;
   onAddUser: () => void;
-  selectedAgency: string;
-  onSelectAgency: (event: SelectChangeEvent<string>) => void;
+  selectedRol: string;
+  onSelectRol: (event: SelectChangeEvent<string>) => void;
   selectedStatus: string;
   onSelectStatus: (event: SelectChangeEvent<string>) => void;
+  selectedCargo: string;
+  onSelectCargo: (event: SelectChangeEvent<string>) => void;
+  searchField: string;
+  onSearchFieldChange: (event: SelectChangeEvent<string>) => void;
 };
 
 export function UserTableToolbar({
@@ -33,10 +37,14 @@ export function UserTableToolbar({
   onFilterName,
   onClearFilter,
   onAddUser,
-  selectedAgency,
-  onSelectAgency,
+  selectedRol,
+  onSelectRol,
   selectedStatus,
   onSelectStatus,
+  selectedCargo,
+  onSelectCargo,
+  searchField,
+  onSearchFieldChange,
 }: UserTableToolbarProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -73,11 +81,28 @@ export function UserTableToolbar({
           {numSelected} seleccionados
         </Typography>
       ) : (
-        <OutlinedInput
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          {/* Select para escoger el campo de búsqueda */}
+          <Select
+            value={searchField}
+            onChange={onSearchFieldChange} // Cambiar el campo de búsqueda
+            displayEmpty
+            sx={{ marginRight: 2, minWidth: 120 }}
+          >
+            <MenuItem value="nombres">Nombres</MenuItem>
+            <MenuItem value="apellidos">Apellidos</MenuItem>
+            <MenuItem value="cc">Cedula</MenuItem>
+            <MenuItem value="item">Item</MenuItem>
+            <MenuItem value="correo">Correo</MenuItem>
+            <MenuItem value="agencia">Agencia</MenuItem>
+          </Select>
+
+          {/* Input para escribir el valor de búsqueda */}
+          <OutlinedInput
             fullWidth
             value={filterName}
             onChange={onFilterName}
-            placeholder="Buscar..."
+            placeholder={`Buscar por ${searchField}...`}
             startAdornment={
               <InputAdornment position="start">
                 <Iconify width={20} icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
@@ -85,6 +110,7 @@ export function UserTableToolbar({
             }
             sx={{ maxWidth: 320 }}
           />
+        </div>
       )}
 
       {numSelected > 0 ? (
@@ -115,17 +141,19 @@ export function UserTableToolbar({
           >
             <div style={{ padding: '16px', display: 'flex', flexDirection: 'column' }}>
               <Select
-                value={selectedAgency}
-                onChange={onSelectAgency}
+                value={selectedRol}
+                onChange={onSelectRol}
                 displayEmpty
                 sx={{ minWidth: 120, marginBottom: 2, fontSize: '0.875rem' }}
               >
                 <MenuItem value="">
-                  <em>Agencia</em>
+                  <em>Rol</em>
                 </MenuItem>
-                <MenuItem value="Agencia A">Agencia A</MenuItem>
-                <MenuItem value="Agencia B">Agencia B</MenuItem>
-                <MenuItem value="Agencia C">Agencia C</MenuItem>
+                <MenuItem value="Admin">Admin</MenuItem>
+                <MenuItem value="Agencia">Agencia</MenuItem>
+                <MenuItem value="Coordinacion">Coordinacion</MenuItem>
+                <MenuItem value="Jefatura">Jefatura</MenuItem>
+                <MenuItem value="Almacenista">Almacenista</MenuItem>
               </Select>
               <Select
                 value={selectedStatus}
@@ -138,6 +166,22 @@ export function UserTableToolbar({
                 </MenuItem>
                 <MenuItem value="activo">Activo</MenuItem>
                 <MenuItem value="inactivo">Inactivo</MenuItem>
+              </Select>
+              <Select
+                value={selectedCargo}
+                onChange={onSelectCargo}
+                displayEmpty
+                sx={{ minWidth: 120, marginBottom: 2, fontSize: '0.875rem' }}
+              >
+                <MenuItem value="">
+                  <em>Cargo</em>
+                </MenuItem>
+                <MenuItem value="DIRECTOR DE AGENCIA">DIRECTOR DE AGENCIA</MenuItem>
+                <MenuItem value="JEFE ÁREA REPORTES">JEFE ÁREA REPORTES</MenuItem>
+                <MenuItem value="JEFE DEPARTAMENTO">JEFE DEPARTAMENTO</MenuItem>
+                <MenuItem value="DIRECTOR GENERAL">DIRECTOR GENERAL</MenuItem>
+                <MenuItem value="OFICIAL DE CUMPLIMIENTO">OFICIAL DE CUMPLIMIENTO</MenuItem>
+                <MenuItem value="COORDINADOR DE AGENCIAS">COORDINADOR DE AGENCIAS</MenuItem>
               </Select>
               <Button
                 variant="contained"

@@ -5,8 +5,9 @@ import type { ProviderProps } from "./provider-table-row";
 type ApplyFilterProps = {
   inputData: ProviderProps[];
   filterName: string;
-  selectedCategory: string;
-  selectedTipo: string; // Agregar el filtro para el estado
+  selectedIns: boolean | "";
+  selectedDat: boolean | "";
+  searchField: string;
   comparator: (a: any, b: any) => number;
 };
 
@@ -33,8 +34,9 @@ export function applyFilter({
   inputData,
   comparator,
   filterName,
-  selectedCategory,
-  selectedTipo,
+  selectedIns,
+  selectedDat,
+  searchField,
 }: ApplyFilterProps) {
   const stabilizedThis = inputData.map((el, index) => [el, index] as const);
 
@@ -46,21 +48,36 @@ export function applyFilter({
 
   inputData = stabilizedThis.map((el) => el[0]);
 
+  // Filtrado por el término de búsqueda basado en el campo seleccionado
   if (filterName) {
-    inputData = inputData.filter(
-      (provider) =>
-        provider.razon_social.toLowerCase().includes(filterName.toLowerCase()) ||
-        provider.contacto.toLowerCase().includes(filterName.toLowerCase()) ||
-        provider.nit.toString().includes(filterName)
-    );
+    inputData = inputData.filter((provider) => {
+      switch (searchField) {
+        case "Razon Social":
+          return provider.razon_social.toLowerCase().includes(filterName.toLowerCase());
+        case "Nit":
+          return provider.nit.toString() === filterName; // Comparación exacta
+        case "Item":
+          return provider.item.toString() === filterName; // Comparación exacta
+        case "Celular":
+          return provider.cel.toString().includes(filterName.toLowerCase());
+        case "Telefono":
+          return provider.tel.toString().includes(filterName.toLowerCase());
+        case "Correo":
+          return provider.correo.toString().includes(filterName.toLowerCase());
+        case "Contacto":
+          return provider.contacto.toString().includes(filterName.toLowerCase());
+        default:
+          return false; // Si no se selecciona un campo válido, no filtra nada
+      }
+    });
   }
 
-  if (selectedCategory) {
-    inputData = inputData.filter((provider) => provider.ciudad === selectedCategory);
+  if (selectedIns) {
+    inputData = inputData.filter((provider) => provider.ver_ins === selectedIns);
   }
 
-  if (selectedTipo) {
-    inputData = inputData.filter((provider) => provider.act_eco === selectedTipo);
+  if (selectedDat) {
+    inputData = inputData.filter((provider) => provider.ver_dat === selectedDat);
   }
 
   return inputData;

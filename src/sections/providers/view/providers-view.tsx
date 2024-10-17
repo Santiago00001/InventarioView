@@ -44,11 +44,12 @@ export function ProviderView() {
   const [editMode, setEditMode] = useState<boolean>(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [selectedTipo, setSelectedTipo] = useState<string>('');
+  const [selectedIns, setSelectedIns] = useState<boolean>(false);
+  const [selectedDat, setSelectedDat] = useState<boolean>(false);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [orderBy, setOrderBy] = useState<string>('item');
+  const [searchField, setSearchField] = useState("Razon Social");
 
   const handleSelectRow = (id: string) => {
     setSelectedRows((prev) =>
@@ -105,8 +106,9 @@ export function ProviderView() {
     inputData: providers,
     comparator: getComparator(order, orderBy), // Asegúrate de usar el estado actual
     filterName,
-    selectedCategory,
-    selectedTipo,
+    selectedIns,
+    selectedDat,
+    searchField,
   });
 
   const handleRequestSort = (property: string) => {
@@ -119,8 +121,13 @@ export function ProviderView() {
 
   const handleClearFilter = () => {
     setFilterName('');
-    setSelectedCategory('');
-    setSelectedTipo('');
+    setSelectedIns(false);
+    setSelectedDat(false);
+    setSearchField('Razon Social');
+  };
+
+  const handleSearchFieldChange = (event: SelectChangeEvent<string>) => {
+    setSearchField(event.target.value); // Asegúrate de manejar correctamente el evento
   };
 
   const handleEditProduct = (provider: ProviderProps) => {
@@ -172,10 +179,21 @@ export function ProviderView() {
           }}
           onClearFilter={handleClearFilter}
           onAddProduct={handleOpenAddProductModal}
-          selectedCategory={selectedCategory}
-          onSelectedCategory={(event: SelectChangeEvent<string>) => setSelectedCategory(event.target.value)} // Manejador ajustado
-          selectedTipo={selectedTipo}
-          onselectedTipo={(event: SelectChangeEvent<string>) => setSelectedTipo(event.target.value)} // Manejador ajustado
+
+          selectedIns={selectedIns}
+          onSelectedIns={(event: SelectChangeEvent<string>) => {
+            const {value} = event.target;
+            setSelectedIns(value === "true");
+          }}
+
+          selectedDat={selectedDat}
+          onSelectedDat={(event: SelectChangeEvent<string>) => {
+            const {value} = event.target;
+            setSelectedDat(value === "true");
+          }}
+
+          searchField={searchField}
+          onSearchFieldChange={handleSearchFieldChange}
         />
 
         <Scrollbar>
@@ -206,7 +224,7 @@ export function ProviderView() {
                   { id: 'cod_dat', label: 'Codigo DAT' },
                   { id: 'cod_dat_fecha', label: 'Fecha DAT' },
                   { id: 'ver_dat', label: 'Verificacion DAT' },
-                  { id: ''},
+                  { id: '' },
                 ]}
               />
               <TableBody>

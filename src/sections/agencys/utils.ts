@@ -56,11 +56,12 @@ type ApplyFilterProps = {
   inputData: AgenciaProps[];
   filterName: string;
   selectedUser: string;
-  selectedStatus: string;
+  selectedCoor: string;
+  searchField: string;
   comparator: (a: any, b: any) => number;
 };
 
-export function applyFilter({ inputData, comparator, filterName, selectedUser, selectedStatus }: ApplyFilterProps) {
+export function applyFilter({ inputData, comparator, searchField, filterName, selectedUser, selectedCoor }: ApplyFilterProps) {
   const stabilizedThis = inputData.map((el, index) => [el, index] as const);
 
   stabilizedThis.sort((a, b) => {
@@ -71,16 +72,26 @@ export function applyFilter({ inputData, comparator, filterName, selectedUser, s
 
   inputData = stabilizedThis.map((el) => el[0]);
 
+  // Filtrado por el término de búsqueda basado en el campo seleccionado
   if (filterName) {
-    inputData = inputData.filter(
-      (user) =>
-        user.nombre.toLowerCase().includes(filterName.toLowerCase()) ||
-        user.cod.toString().includes(filterName.toLowerCase())
-    );
+    inputData = inputData.filter((provider) => {
+      switch (searchField) {
+        case "Nombre":
+          return provider.nombre.toLowerCase().includes(filterName.toLowerCase());
+        case "Codigo":
+          return provider.cod.toString() === filterName; // Comparación exacta
+        case "Item":
+          return provider.item.toString() === filterName; // Comparación exacta
+        case "Director":
+          return provider.director.toString().includes(filterName.toLowerCase());
+        default:
+          return false; // Si no se selecciona un campo válido, no filtra nada
+      }
+    });
   }
 
-  if (selectedUser) {
-    inputData = inputData.filter((user) => user.nombre === selectedUser);
+  if (selectedCoor) {
+    inputData = inputData.filter((user) => user.coordinador === selectedCoor);
   }
 
   console.log('Filtered Data:', inputData); // Verifica el resultado filtrado

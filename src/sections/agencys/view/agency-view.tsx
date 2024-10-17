@@ -1,4 +1,5 @@
 // UserView.tsx
+import type { SelectChangeEvent } from '@mui/material';
 import type { UserProps } from 'src/sections/user/user-table-row';
 
 import axios from 'axios';
@@ -37,7 +38,7 @@ import { AgencyTableRow, type AgenciaProps } from '../agency-table-row';
 export function AgencyView() {
   const [filterName, setFilterName] = useState<string>('');
   const [selectedUser, setSelectedUser] = useState<string>('');
-  const [selectedStatus, setSelectedStatus] = useState<string>('');
+  const [selectedCoor, setSelectedCoor] = useState<string>('');
   const [agencies, setAgencies] = useState<AgenciaProps[]>([]); // Estado para agencias
   const [users, setUsers] = useState<UserProps[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -50,6 +51,7 @@ export function AgencyView() {
   const [agencyToDelete, setAgencyToDelete] = useState<AgenciaProps | null>(null);
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [orderBy, setOrderBy] = useState<string>('item');
+  const [searchField, setSearchField] = useState("Codigo");
 
   const handleSaveAgency = async (agency: AgenciaProps): Promise<void> => {
     if (agency._id) {
@@ -141,7 +143,8 @@ export function AgencyView() {
     comparator: getComparator(order, orderBy), // Asegúrate de usar el estado actual
     filterName,
     selectedUser,
-    selectedStatus,
+    selectedCoor,
+    searchField,
   });
 
   const handleRequestSort = (property: string) => {
@@ -155,7 +158,12 @@ export function AgencyView() {
   const handleClearFilter = () => {
     setFilterName('');
     setSelectedUser('');
-    setSelectedStatus('');
+    setSelectedCoor('');
+    setSearchField('Codigo');
+  };
+
+  const handleSearchFieldChange = (event: SelectChangeEvent<string>) => {
+    setSearchField(event.target.value); // Asegúrate de manejar correctamente el evento
   };
 
   const handleEditAgency = (agency: AgenciaProps) => {
@@ -210,11 +218,12 @@ export function AgencyView() {
           }}
           onClearFilter={handleClearFilter}
           onAddAgency={handleOpenAddAgencyModal} // Vinculado a la función de abrir el modal
-          selectedAgency={selectedUser}
-          onSelectAgency={(event) => setSelectedUser(event.target.value as string)}
-          selectedStatus={selectedStatus}
-          onSelectStatus={(event) => setSelectedStatus(event.target.value as string)}
-          agencies={agencies} />
+          selectedCoor={selectedCoor}
+          onSelectCoor={(event) => setSelectedCoor(event.target.value as string)}
+          agencies={agencies} 
+          searchField={searchField}
+          onSearchFieldChange={handleSearchFieldChange}
+          />
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>

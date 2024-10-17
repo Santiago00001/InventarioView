@@ -24,10 +24,10 @@ type AgencyTableToolbarProps = {
   onClearFilter: () => void;
   onAddAgency: () => void;
   agencies: AgenciaProps[]; // Añadir la lista de agencias como prop
-  selectedAgency: string;
-  onSelectAgency: (event: SelectChangeEvent<string>) => void;
-  selectedStatus: string;
-  onSelectStatus: (event: SelectChangeEvent<string>) => void;
+  selectedCoor: string;
+  onSelectCoor: (event: SelectChangeEvent<string>) => void;
+  searchField: string;
+  onSearchFieldChange: (event: SelectChangeEvent<string>) => void;
 };
 
 export function AgencyTableToolbar({
@@ -37,10 +37,10 @@ export function AgencyTableToolbar({
   onClearFilter,
   onAddAgency,
   agencies, // Recibir la lista de agencias
-  selectedAgency,
-  onSelectAgency,
-  selectedStatus,
-  onSelectStatus,
+  selectedCoor,
+  onSelectCoor,
+  searchField,
+  onSearchFieldChange,
 }: AgencyTableToolbarProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -77,18 +77,34 @@ export function AgencyTableToolbar({
           {numSelected} seleccionados
         </Typography>
       ) : (
-        <OutlinedInput
-          fullWidth
-          value={filterName}
-          onChange={onFilterName}
-          placeholder="Buscar..."
-          startAdornment={
-            <InputAdornment position="start">
-              <Iconify width={20} icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
-            </InputAdornment>
-          }
-          sx={{ maxWidth: 320 }}
-        />
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          {/* Select para escoger el campo de búsqueda */}
+          <Select
+            value={searchField}
+            onChange={onSearchFieldChange} // Cambiar el campo de búsqueda
+            displayEmpty
+            sx={{ marginRight: 2, minWidth: 120 }}
+          >
+            <MenuItem value="Nombre">Nombre</MenuItem>
+            <MenuItem value="Item">Item</MenuItem>
+            <MenuItem value="Codigo">Codigo</MenuItem>
+            <MenuItem value="Director">Director</MenuItem>
+          </Select>
+
+          {/* Input para escribir el valor de búsqueda */}
+          <OutlinedInput
+            fullWidth
+            value={filterName}
+            onChange={onFilterName}
+            placeholder={`Buscar por ${searchField}...`}
+            startAdornment={
+              <InputAdornment position="start">
+                <Iconify width={20} icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
+              </InputAdornment>
+            }
+            sx={{ maxWidth: 320 }}
+          />
+        </div>
       )}
 
       {numSelected > 0 ? (
@@ -119,31 +135,21 @@ export function AgencyTableToolbar({
           >
             <div style={{ padding: '16px', display: 'flex', flexDirection: 'column' }}>
               <Select
-                value={selectedAgency}
-                onChange={onSelectAgency}
+                value={selectedCoor}
+                onChange={onSelectCoor}
                 displayEmpty
                 sx={{ minWidth: 120, marginBottom: 2, fontSize: '0.875rem' }}
               >
                 <MenuItem value="">
-                  <em>Agencia</em>
+                  <em>Coordinador</em>
                 </MenuItem>
-                {agencies.map((agency) => (
-                  <MenuItem key={agency._id} value={agency._id}>
-                    {agency.nombre}
-                  </MenuItem>
-                ))}
-              </Select>
-              <Select
-                value={selectedStatus}
-                onChange={onSelectStatus}
-                displayEmpty
-                sx={{ minWidth: 120, marginBottom: 2, fontSize: '0.875rem' }}
-              >
-                <MenuItem value="">
-                  <em>Estado</em>
-                </MenuItem>
-                <MenuItem value="activo">Activo</MenuItem>
-                <MenuItem value="inactivo">Inactivo</MenuItem>
+                <MenuItem value="C9">Coordinador 9</MenuItem>
+                <MenuItem value="C5">Coordinador 5</MenuItem>
+                <MenuItem value="C4">Coordinador 4</MenuItem>
+                <MenuItem value="C3">Coordinador 3</MenuItem>
+                <MenuItem value="C2">Coordinador 2</MenuItem>
+                <MenuItem value="C1">Coordinador 1</MenuItem>
+                <MenuItem value="NA">No Aplica</MenuItem>
               </Select>
               <Button
                 variant="contained"

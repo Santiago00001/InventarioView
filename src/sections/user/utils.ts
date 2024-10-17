@@ -55,12 +55,14 @@ export function getComparator<Key extends keyof any>(
 type ApplyFilterProps = {
   inputData: UserProps[];
   filterName: string;
-  selectedAgency: string;
+  selectedRol: string;
   selectedStatus: string;
+  selectedCargo: string;
+  searchField: string;
   comparator: (a: any, b: any) => number;
 };
 
-export function applyFilter({ inputData, comparator, filterName, selectedAgency, selectedStatus }: ApplyFilterProps) {
+export function applyFilter({ inputData, searchField, comparator, filterName, selectedRol, selectedStatus, selectedCargo }: ApplyFilterProps) {
   const stabilizedThis = inputData.map((el, index) => [el, index] as const);
 
   stabilizedThis.sort((a, b) => {
@@ -71,23 +73,36 @@ export function applyFilter({ inputData, comparator, filterName, selectedAgency,
 
   inputData = stabilizedThis.map((el) => el[0]);
 
-  // Filtrado por el término de búsqueda
+  // Filtrado por el término de búsqueda basado en el campo seleccionado
   if (filterName) {
-    inputData = inputData.filter(
-      (user) =>
-        user.nombres.toLowerCase().includes(filterName.toLowerCase()) ||
-        user.apellidos.toLowerCase().includes(filterName.toLowerCase()) ||
-        user.cc.toString().includes(filterName.toLowerCase())
-    );
+    inputData = inputData.filter((product) => {
+      switch (searchField) {
+        case "nombre":
+          return product.nombres.toLowerCase().includes(filterName.toLowerCase());
+        case "item":
+          return product.item.toString() === filterName; // Comparación exacta
+        case "codigo":
+          return product.cc.toString().includes(filterName.toLowerCase());
+        case "correo":
+          return product.correo.toString().includes(filterName.toLowerCase());
+          case "agencia":
+          return product.agencia.nombre.toLowerCase().includes(filterName.toLowerCase());
+        default:
+          return false; // Si no se selecciona un campo válido, no filtra nada
+      }
+    });
   }
 
-  if (selectedAgency) {
-    inputData = inputData.filter((user) => user.agencia && user.agencia.nombre === selectedAgency);
-  }  
+  if (selectedRol) {
+    inputData = inputData.filter((user) => user.rol === selectedRol);
+  }
 
-  // Filtrado por estado
   if (selectedStatus) {
     inputData = inputData.filter((user) => user.status === selectedStatus);
+  }
+
+  if (selectedCargo) {
+    inputData = inputData.filter((user) => user.cargo === selectedCargo);
   }
   return inputData;
 }

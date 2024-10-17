@@ -130,21 +130,21 @@ export function ProductsView() {
     setFilterName('');
     setSelectedCategory('');
     setSelectedTipo('');
-    setSearchField(''); // Limpiar también el campo de búsqueda adicional
+    setSearchField('nombre');
   };
 
   const handleEditProduct = (product: ProductProps) => {
     setSelectedProduct(product);
-    setEditMode(true); // Abre el diálogo al editar
+    setEditMode(true);
   };
 
   const handleCloseEditDialog = () => {
     setEditMode(false);
-    setSelectedProduct(null); // Limpiar el producto seleccionado
+    setSelectedProduct(null);
   };
 
   const handleSearchFieldChange = (event: SelectChangeEvent<string>) => {
-    setSearchField(event.target.value); // Asegúrate de manejar correctamente el evento
+    setSearchField(event.target.value);
   };
 
   const handleDeleteProduct = async (_id: string) => {
@@ -190,8 +190,8 @@ export function ProductsView() {
           onselectedTipo={(event: SelectChangeEvent<string>) => setSelectedTipo(event.target.value)}
           selectedPresentacion={selectedPresentacion}
           onselectedPresentacion={(event: SelectChangeEvent<string>) => setSelectedPresentacion(event.target.value)}
-          searchField={searchField} // Pasar searchField como prop
-          onSearchFieldChange={handleSearchFieldChange} // Pasar el manejador como prop
+          searchField={searchField}
+          onSearchFieldChange={handleSearchFieldChange}
         />
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>

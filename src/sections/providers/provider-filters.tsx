@@ -21,10 +21,12 @@ type ProviderTableToolbarProps = {
   onFilterName: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onClearFilter: () => void;
   onAddProduct: () => void;
-  selectedCategory: string;
-  onSelectedCategory: (event: SelectChangeEvent<string>) => void; // Corregido el nombre
-  selectedTipo: string;
-  onselectedTipo: (event: SelectChangeEvent<string>) => void;
+  selectedIns: boolean | "";
+  onSelectedIns: (event: SelectChangeEvent<string>) => void; // Corregido el nombre
+  selectedDat: boolean | "";
+  onSelectedDat: (event: SelectChangeEvent<string>) => void;
+  searchField: string;
+  onSearchFieldChange: (event: SelectChangeEvent<string>) => void;
 };
 
 export function ProviderTableToolbar({
@@ -33,10 +35,12 @@ export function ProviderTableToolbar({
   onFilterName,
   onClearFilter,
   onAddProduct,
-  selectedCategory,
-  onSelectedCategory,
-  selectedTipo,
-  onselectedTipo,
+  selectedIns,
+  onSelectedIns,
+  selectedDat,
+  onSelectedDat,
+  searchField,
+  onSearchFieldChange,
 }: ProviderTableToolbarProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -73,18 +77,37 @@ export function ProviderTableToolbar({
           {numSelected} seleccionados
         </Typography>
       ) : (
-        <OutlinedInput
-          fullWidth
-          value={filterName}
-          onChange={onFilterName}
-          placeholder="Buscar por nombre, item o código..."
-          startAdornment={
-            <InputAdornment position="start">
-              <Iconify width={20} icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
-            </InputAdornment>
-          }
-          sx={{ maxWidth: 320 }}
-        />
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          {/* Select para escoger el campo de búsqueda */}
+          <Select
+            value={searchField}
+            onChange={onSearchFieldChange} // Cambiar el campo de búsqueda
+            displayEmpty
+            sx={{ marginRight: 2, minWidth: 120 }}
+          >
+            <MenuItem value="Razon Social">Razon Social</MenuItem>
+            <MenuItem value="Nit">Nit</MenuItem>
+            <MenuItem value="Item">Item</MenuItem>
+            <MenuItem value="Celular">Celular</MenuItem>
+            <MenuItem value="Telefono">Telefono</MenuItem>
+            <MenuItem value="Correo">Correo</MenuItem>
+            <MenuItem value="Contacto">Contacto</MenuItem>
+          </Select>
+
+          {/* Input para escribir el valor de búsqueda */}
+          <OutlinedInput
+            fullWidth
+            value={filterName}
+            onChange={onFilterName}
+            placeholder={`Buscar por ${searchField}...`}
+            startAdornment={
+              <InputAdornment position="start">
+                <Iconify width={20} icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
+              </InputAdornment>
+            }
+            sx={{ maxWidth: 320 }}
+          />
+        </div>
       )}
 
       {numSelected > 0 ? (
@@ -115,34 +138,31 @@ export function ProviderTableToolbar({
           >
             <div style={{ padding: '16px', display: 'flex', flexDirection: 'column' }}>
               <Select
-                value={selectedCategory}
-                onChange={onSelectedCategory}
+                value={selectedIns ? String(selectedIns) : ""} // Convertimos a cadena
+                onChange={onSelectedIns}
                 displayEmpty
                 sx={{ minWidth: 120, marginBottom: 2, fontSize: '0.875rem' }}
               >
                 <MenuItem value="">
-                  <em>Categoria</em>
+                  <em>Verificacion Inspektor</em>
                 </MenuItem>
-                <MenuItem value="A">Aseo</MenuItem>
-                <MenuItem value="C">Cafeteria</MenuItem>
-                <MenuItem value="M">Mercadeo</MenuItem>
-                <MenuItem value="P">Papeleria</MenuItem>
-                <MenuItem value="R">Repuestos de Mantenimiento</MenuItem>
-                <MenuItem value="S">Sistemas de insumos</MenuItem>
-                <MenuItem value="T">Tamizaje</MenuItem>
+                <MenuItem value="true">Activo</MenuItem>
+                <MenuItem value="false">Vencido</MenuItem>
               </Select>
+
               <Select
-                value={selectedTipo}
-                onChange={onselectedTipo}
+                value={selectedDat ? String(selectedDat) : ""} // Convertimos a cadena
+                onChange={onSelectedDat}
                 displayEmpty
                 sx={{ minWidth: 120, marginBottom: 2, fontSize: '0.875rem' }}
               >
                 <MenuItem value="">
-                  <em>Tipo</em>
+                  <em>Verificacion DataCredito</em>
                 </MenuItem>
-                <MenuItem value="I">Interno</MenuItem>
-                <MenuItem value="E">Externo</MenuItem>
+                <MenuItem value="true">Activo</MenuItem>
+                <MenuItem value="false">Vencido</MenuItem>
               </Select>
+
               <Button
                 variant="contained"
                 onClick={handleClearFilters}
