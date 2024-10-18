@@ -30,7 +30,7 @@ export const navData = [
   {
     title: 'Dependencias',
     path: '/agencys',
-    icon: icon('ic-equipo'),
+    icon: icon('ic-shop'),
   }
   /*
   {

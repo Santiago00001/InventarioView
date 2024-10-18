@@ -56,8 +56,14 @@ export function EditProductView({ product, onClose, onSave }: EditProductViewPro
   }, [product]);
 
   const handleSave = async () => {
+    const updatedFormData = {
+      ...formData,
+      nombre: formData.nombre.toUpperCase(),
+      categoria: formData.categoria.toUpperCase(),
+      grupo_desc: formData.grupo_desc.toUpperCase()
+    };
     try {
-      await onSave(formData);
+      await onSave(updatedFormData);
       onClose();
     } catch (error) {
       console.error('Error updating product:', error);
@@ -127,7 +133,6 @@ export function EditProductView({ product, onClose, onSave }: EditProductViewPro
         setCustomGroup('');
         setCustomCategory('');
         setCustomCtaCont('');
-  
       } catch (error) {
         console.error('Error saving category:', error);
         alert('Failed to save the category. Please try again.');
@@ -174,12 +179,11 @@ export function EditProductView({ product, onClose, onSave }: EditProductViewPro
             <MenuItem value="OTRO">OTRO</MenuItem>
           </Select>
         </FormControl>
-
         {/* Mostrar campos si selecciona "OTRO" */}
         {isCustomGroup && (
           <>
             <TextField
-              label="Nombre del grupo personalizado"
+              label="Nombre del grupo nuevo"
               value={customGroup}
               onChange={(e) => setCustomGroup(e.target.value)}
               fullWidth

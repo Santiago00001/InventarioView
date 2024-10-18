@@ -48,24 +48,29 @@ export function CreateProductView({ product, onClose, onSave }: CreateUserViewPr
     visible: 1,
   });
 
-    // Fetch categories when the component mounts
-    useEffect(() => {
-      fetchCategories()
-        .then((fetchedCategories) => setCategories(fetchedCategories))
-        .catch((error) => console.error('Error fetching categories:', error));
-    }, []);
-  
-    useEffect(() => {
-      setFormData(product);
-    }, [product]);
+  // Fetch categories when the component mounts
+  useEffect(() => {
+    fetchCategories()
+      .then((fetchedCategories) => setCategories(fetchedCategories))
+      .catch((error) => console.error('Error fetching categories:', error));
+  }, []);
+
+  useEffect(() => {
+    setFormData(product);
+  }, [product]);
 
   const handleSave = async () => {
     if (!formData.nombre || !formData.categoria || !formData.grupo_desc || !formData.tipo || !formData.presentacion || !formData.cta_cont) {
       alert('Por favor completa todos los campos requeridos.');
       return;
     }
-
-    await onSave(formData);
+    const updatedFormData = {
+      ...formData,
+      nombre: formData.nombre.toUpperCase(),
+      categoria: formData.categoria.toUpperCase(),
+      grupo_desc: formData.grupo_desc.toUpperCase()
+    };
+    await onSave(updatedFormData);
     onClose();
   };
 
@@ -171,7 +176,7 @@ export function CreateProductView({ product, onClose, onSave }: CreateUserViewPr
         {isCustomGroup && (
           <>
             <TextField
-              label="Nombre del grupo personalizado"
+              label="Nombre del grupo nuevo"
               value={customGroup}
               onChange={(e) => setCustomGroup(e.target.value)}
               fullWidth

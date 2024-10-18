@@ -31,8 +31,12 @@ export function EditAgencyView({ agency, onClose, onSave, users }: EditAgencyVie
   }, [agency]);
 
   const handleSave = async () => {
+    const updatedFormData = {
+      ...formData,
+      nombre: formData.nombre.toUpperCase(),
+    };
     try {
-      await onSave(formData); // Guardamos los cambios
+      await onSave(updatedFormData); // Guardamos los cambios
       onClose(); // Cierra el modal
     } catch (error) {
       console.error('Error updating agency:', error);

@@ -21,17 +21,20 @@ export function CreateAgencyView({ onClose, onSave, users }: CreateAgencyViewPro
     nombre: '',
     cod: 0,
     coordinador: '',
-    director: 'Sin Director',
+    director: '',
   }
 );
 
   const handleSave = async () => {
-    if (!formData.nombre || !formData.cod || !formData.director) {
+    if (!formData.nombre || !formData.cod || !formData.coordinador) {
       alert('Por favor completa todos los campos requeridos.');
       return;
     }
-
-    await onSave(formData);
+    const updatedFormData = {
+      ...formData,
+      nombre: formData.nombre.toUpperCase(),
+    };
+    await onSave(updatedFormData);
     onClose();
   };
 
