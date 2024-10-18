@@ -38,13 +38,20 @@ export function EditUserView({ user, onClose, onSave, agencies }: EditUserViewPr
 
   const handleSave = async () => {
     try {
+      // Desestructuramos "status" para no incluirlo en la actualización
+      const { status, ...formDataWithoutStatus } = formData;
+  
+      // Creamos una copia de formDataWithoutStatus y concatenamos el dominio en el campo "correo"
       const updatedUserData = {
-        ...formData,
-        correo: `${formData.correo}@coopserp.com`, // Concatenar el dominio aquí
+        ...formDataWithoutStatus,
+        correo: `${formDataWithoutStatus.correo}@coopserp.com`, // Concatenar el dominio
       };
-
-      await onSave(updatedUserData); // Guardamos los cambios
-      onClose(); // Cierra el modal
+  
+      // Guardamos los cambios (sin "status" y con el correo actualizado)
+      await onSave(updatedUserData);
+  
+      // Cierra el modal
+      onClose();
     } catch (error) {
       console.error('Error updating user:', error);
     }

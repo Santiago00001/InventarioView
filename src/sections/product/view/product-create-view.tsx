@@ -104,7 +104,6 @@ export function CreateProductView({ product, onClose, onSave }: CreateUserViewPr
         categoryLetter: customCategory,
         cta_cont: Number(customCtaCont),
       };
-
       try {
         // Hacer una petición POST al backend para guardar la nueva categoría
         const response = await fetch(`${import.meta.env.VITE_APP_API_URL}api/categories`, {
