@@ -20,8 +20,18 @@ export function useCreateProductDialog(onSave: (product: ProductProps) => Promis
           onSave={async (product) => {
             await onSave(product); // Llama a la función para guardar el usuario
             handleClose(); // Cierra el modal
-          }}
-        />
+          } } product={{
+            _id: '',
+            item: 0,
+            nombre: '',
+            categoria: '',
+            grupo_desc: '',
+            tipo: '',
+            presentacion: '',
+            cta_cont: 0,
+            codigo: 0,
+            visible: 0
+          }}        />
       </DialogContent>
     </Dialog>
   );

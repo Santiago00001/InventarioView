@@ -164,21 +164,6 @@ export function EditUserView({ user, onClose, onSave, agencies }: EditUserViewPr
             <MenuItem value="Almacenista">Almacenista</MenuItem>
           </Select>
         </FormControl>
-
-        <TextField
-          select
-          label="Estado"
-          value={formData.status}
-          onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-          fullWidth
-          margin="normal"
-          variant="outlined"
-        >
-          <MenuItem value="activo">Activo</MenuItem>
-          <MenuItem value="inactivo">Inactivo</MenuItem>
-          <MenuItem value="suspendido">Suspendido</MenuItem>
-        </TextField>
-
         <Button variant="contained" sx={{ mr: 2 }} onClick={handleSave} startIcon={<Iconify icon="mingcute:save-line" />}>
           Guardar
         </Button>

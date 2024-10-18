@@ -65,7 +65,6 @@ export function ProviderView() {
         setProviders((prev) =>
           prev.map((p) => (p._id === updatedProduct._id ? updatedProduct : p))
         );
-
         setEditMode(false);
         setSelectedProduct(null);
       } catch (error) {
